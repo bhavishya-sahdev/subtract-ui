@@ -1,61 +1,131 @@
 import { Link } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { routes } from "~/lib/routes";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { toast } from "~/components/ui/use-toast";
+import { client } from "~/lib/axiosClient";
+import api from "~/lib/api";
+const FormSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  password: z.string().min(8, "Should be atleast 8 characters"),
+});
 
 export default function SignupForm() {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      const res = await client.post(api.auth.signup, data);
+      if (res.data.error) {
+        for (const field in FormSchema.shape) {
+          if (res.data.error[field]) {
+            form.setError(field as keyof typeof FormSchema.shape, {
+              message: res.data.error[field][0],
+            });
+          }
+        }
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      console.error(e);
+    }
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
+
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-xl">Sign Up</CardTitle>
-        <CardDescription>
-          Enter your information to create an account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="first-name">First name</Label>
-              <Input id="first-name" placeholder="Max" required />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="last-name">Last name</Label>
-              <Input id="last-name" placeholder="Robinson" required />
-            </div>
-          </div>
+    <div className="p-2">
+      <p className="text-3xl mb-1">Sign up for Subtract</p>
+      <p className="mb-8">Get an account going in seconds!</p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="block">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="w-[300px]"
+                      placeholder="Max Dwayne"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="w-[300px]"
+                      placeholder="m@example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input className="w-[300px]" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full mt-4">
+              Create an account
+            </Button>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" />
+          <div className="mx-auto mt-2 text-center text-sm">
+            Already have an account?{" "}
+            <Link to={routes.auth.login} className="underline">
+              Sign in
+            </Link>
           </div>
-          <Button type="submit" className="w-full">
-            Create an account
-          </Button>
-        </div>
-        <div className="mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <Link to={routes.auth.login} className="underline">
-            Sign in
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+        </form>
+      </Form>
+    </div>
   );
 }
