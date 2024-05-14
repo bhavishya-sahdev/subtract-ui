@@ -14,7 +14,6 @@ import {
 } from "~/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "~/components/ui/use-toast";
 import { client } from "~/lib/axiosClient";
 import api from "~/lib/api";
 const FormSchema = z.object({
@@ -47,18 +46,10 @@ export default function SignupForm() {
     } catch (e: any) {
       console.error(e);
     }
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
   }
 
   return (
-    <div className="p-2">
+    <div className="w-full max-w-sm p-4">
       <p className="text-3xl mb-1">Sign up for Subtract</p>
       <p className="mb-8">Get an account going in seconds!</p>
       <Form {...form}>
@@ -71,11 +62,7 @@ export default function SignupForm() {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      className="w-[300px]"
-                      placeholder="Max Dwayne"
-                      {...field}
-                    />
+                    <Input placeholder="Max Dwayne" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
@@ -91,11 +78,7 @@ export default function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      className="w-[300px]"
-                      placeholder="m@example.com"
-                      {...field}
-                    />
+                    <Input placeholder="m@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,7 +91,7 @@ export default function SignupForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input className="w-[300px]" type="password" {...field} />
+                    <Input type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
