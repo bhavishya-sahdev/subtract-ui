@@ -1,5 +1,7 @@
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import MainNav from "~/components/custom/MainNav";
+import { routes } from "~/lib/routes";
 
 const Dashboard = () => {
   return (
@@ -11,5 +13,17 @@ const Dashboard = () => {
     </>
   );
 };
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+
+  if (
+    url.pathname === routes.dashboard.DEFAULT ||
+    url.pathname === `${routes.dashboard.DEFAULT}/`
+  ) {
+    return redirect(routes.dashboard.overview);
+  }
+  return null;
+}
 
 export default Dashboard;
