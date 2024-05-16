@@ -50,6 +50,11 @@ export default function LoginForm() {
           });
       }
     } catch (e: any) {
+      toast({
+        variant: "destructive",
+        title: "An unknown error occured.",
+        description: "Please try again in a bit!",
+      });
       console.error(e);
     }
   }
