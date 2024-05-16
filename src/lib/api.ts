@@ -1,4 +1,4 @@
-export default {
+const routes = {
   auth: {
     signup: "/auth/signup",
     signin: "/auth/signin",
@@ -7,3 +7,4 @@ export default {
     getDetails: "/user",
   },
 };
+export default routes;
