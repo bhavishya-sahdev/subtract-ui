@@ -3,11 +3,11 @@ export const routes = {
     overview: "/dashboard/overview",
     settings: "/dashboard/settings",
     details: "/dashboard/details",
-    onboarding: "/onboard",
+    onboarding: "/onboarding",
     DEFAULT: "/dashboard",
   },
   auth: {
     signup: "/signup",
-    login: "/login",
+    login: "/signin",
   },
 };
