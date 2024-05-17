@@ -1,5 +1,6 @@
 import DashboardNav from "@/components/custom/DashboardNav"
-import { fetchUserDetails } from "@/lib/utils"
+import { routes } from "@/lib/routes"
+import { fetchUserDetails, fetchUserSubscriptions } from "@/lib/serverUtils"
 import { redirect } from "next/navigation"
 
 export default async function DashboardLayout({
@@ -8,8 +9,15 @@ export default async function DashboardLayout({
     children: React.ReactNode
 }) {
     const user = await fetchUserDetails()
+    const subscriptions = await fetchUserSubscriptions()
+    console.log(subscriptions)
+    if (user.error !== null) {
+        redirect("/")
+    }
 
-    if (user.error !== null) redirect("/")
+    if (!user.data.isOnboardingComplete) {
+        redirect(routes.dashboard.onboarding)
+    }
 
     return (
         <>
