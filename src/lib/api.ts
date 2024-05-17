@@ -1,4 +1,4 @@
-const routes = {
+const api = {
   auth: {
     signup: "/auth/signup",
     signin: "/auth/signin",
@@ -7,4 +7,4 @@ const routes = {
     getDetails: "/user",
   },
 };
-export default routes;
+export default api;
