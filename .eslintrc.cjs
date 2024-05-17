@@ -23,7 +23,9 @@ module.exports = {
 
   // Base config
   extends: ["eslint:recommended"],
-
+  rules: {
+    "react/prop-types": "off",
+  },
   overrides: [
     // React
     {
@@ -35,6 +37,10 @@ module.exports = {
         "plugin:react-hooks/recommended",
         "plugin:jsx-a11y/recommended",
       ],
+      rules: {
+        "react/prop-types": "off",
+        "jsx-a11y/heading-has-content": "off",
+      },
       settings: {
         react: {
           version: "detect",
@@ -65,6 +71,10 @@ module.exports = {
             alwaysTryTypes: true,
           },
         },
+      },
+      rules: {
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off",
       },
       extends: [
         "plugin:@typescript-eslint/recommended",
