@@ -14,8 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { routes } from "@/lib/routes";
+import { TAxiosUserDetails } from "@/lib/types";
 
-const DashboardNav = () => {
+type TDashboardNavProps = {
+  user: TAxiosUserDetails;
+};
+const DashboardNav = ({ user }: TDashboardNavProps) => {
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
@@ -49,16 +53,20 @@ const DashboardNav = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar>
-                  <AvatarFallback>HW</AvatarFallback>
+                  <AvatarFallback>
+                    {user.name.replace(" ", "").slice(0, 2)}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Homework</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user.name}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    m@example.com
+                    {user.email}
                   </p>
                 </div>
               </DropdownMenuLabel>
