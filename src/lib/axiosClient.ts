@@ -5,6 +5,8 @@ export const client = new Axios({
   headers: {
     "Content-Type": "application/json",
   },
+  /** Needed if you want to set cookies on the frontend */
+  withCredentials: true,
   transformRequest: [
     function (data) {
       // Automatically parse data as JSON
