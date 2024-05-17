@@ -1,5 +1,5 @@
 import { routes } from "@/lib/routes"
-import { fetchUserDetails } from "@/lib/utils"
+import { fetchUserDetails } from "@/lib/serverUtils"
 import { redirect } from "next/navigation"
 
 export default async function AuthLayout({
@@ -13,6 +13,7 @@ export default async function AuthLayout({
         if (user.data.isOnboardingComplete) redirect(routes.dashboard.overview)
         else redirect(routes.dashboard.onboarding)
     }
+
     return (
         <div className="h-full flex items-center justify-center">
             {children}
