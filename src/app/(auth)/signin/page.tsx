@@ -19,6 +19,8 @@ import api from "@/lib/api";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const FormSchema = z.object({
   email: z.string(),
@@ -26,6 +28,8 @@ const FormSchema = z.object({
 });
 export default function LoginForm() {
   const { toast } = useToast();
+
+  // initialize form
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -33,9 +37,14 @@ export default function LoginForm() {
     },
   });
 
+  const [inProgress, setInProgress] = useState(false);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
+      setInProgress(true);
+
       const res = await client.post(api.auth.signin, data);
+
       if (res.data.error) {
         if (typeof res.data.error != "string")
           for (const field in FormSchema.shape) {
@@ -48,6 +57,9 @@ export default function LoginForm() {
           toast({
             title: res.data.error,
           });
+
+        /** if error, handle errors and return */
+        return;
       }
     } catch (e: any) {
       toast({
@@ -57,7 +69,9 @@ export default function LoginForm() {
       });
       console.error(e);
     }
+    setInProgress(false);
   }
+
   return (
     <div className="w-full max-w-sm p-4">
       <p className="text-3xl mb-1">Login</p>
@@ -92,7 +106,8 @@ export default function LoginForm() {
               )}
             />
           </div>
-          <Button type="submit" className="w-full mt-4">
+          <Button type="submit" className="w-full mt-4" disabled={inProgress}>
+            {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign in
           </Button>
         </form>

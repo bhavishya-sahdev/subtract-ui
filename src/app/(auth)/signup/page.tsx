@@ -18,6 +18,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { client } from "@/lib/axiosClient";
 import api from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 const FormSchema = z.object({
   name: z.string(),
   email: z.string().email(),
@@ -25,6 +28,7 @@ const FormSchema = z.object({
 });
 
 export default function SignupForm() {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -32,9 +36,13 @@ export default function SignupForm() {
     },
   });
 
+  const [inProgress, setInProgress] = useState(false);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
+      setInProgress(true);
       const res = await client.post(api.auth.signup, data);
+
       if (res.data.error) {
         for (const field in FormSchema.shape) {
           if (res.data.error[field]) {
@@ -43,10 +51,19 @@ export default function SignupForm() {
             });
           }
         }
+
+        /** if error, handle errors and return */
+        return;
       }
     } catch (e: any) {
+      toast({
+        variant: "destructive",
+        title: "An unknown error occured.",
+        description: "Please try again in a bit!",
+      });
       console.error(e);
     }
+    setInProgress(false);
   }
 
   return (
@@ -98,7 +115,8 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-4">
+            <Button type="submit" className="w-full mt-4" disabled={inProgress}>
+              {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create an account
             </Button>
           </div>
