@@ -45,7 +45,7 @@ export default function SignupForm() {
         try {
             setInProgress(true)
 
-            const res = await client.post(api.auth.signin, data)
+            const res = await client.post(api.auth.signup, data)
 
             if (res.data.error) {
                 if (typeof res.data.error != "string")
