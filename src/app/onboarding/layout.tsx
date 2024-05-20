@@ -15,7 +15,7 @@ export default async function OnboardingLayout({
     }
 
     return (
-        <div className="h-full">
+        <div className="h-full flex flex-col">
             <DashboardNav user={user.data} />
             {children}
         </div>
