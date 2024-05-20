@@ -47,7 +47,7 @@ export default function SignupForm() {
 
             const res = await client.post(api.auth.signup, data)
 
-            if (res.data.error) {
+            if (res.data.error !== null) {
                 if (typeof res.data.error != "string")
                     for (const field in FormSchema.shape) {
                         if (res.data.error[field])

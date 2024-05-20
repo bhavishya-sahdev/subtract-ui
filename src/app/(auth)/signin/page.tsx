@@ -46,7 +46,7 @@ export default function LoginForm() {
 
             const res = await client.post(api.auth.signin, data)
 
-            if (res.data.error) {
+            if (res.data.error !== null) {
                 if (typeof res.data.error != "string")
                     for (const field in FormSchema.shape) {
                         if (res.data.error[field])
