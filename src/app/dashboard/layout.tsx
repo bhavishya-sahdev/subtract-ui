@@ -11,13 +11,9 @@ export default async function DashboardLayout({
     const user = await fetchUserDetails()
     const subscriptions = await fetchUserSubscriptions()
     console.log(subscriptions)
-    if (user.error !== null) {
-        redirect("/")
-    }
+    if (user.error !== null) redirect(routes.auth.login)
 
-    if (!user.data.isOnboardingComplete) {
-        redirect(routes.dashboard.onboarding)
-    }
+    if (!user.data.isOnboardingComplete) redirect(routes.dashboard.onboarding)
 
     return (
         <>

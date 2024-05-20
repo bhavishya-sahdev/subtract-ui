@@ -1,4 +1,5 @@
 import DashboardNav from "@/components/custom/DashboardNav"
+import { routes } from "@/lib/routes"
 import { fetchUserDetails } from "@/lib/serverUtils"
 import { redirect } from "next/navigation"
 
@@ -11,7 +12,7 @@ export default async function OnboardingLayout({
     // const subscriptions = await fetchUserSubscriptions()
     // console.log(subscriptions)
     if (user.error !== null) {
-        redirect("/")
+        redirect(routes.auth.login)
     }
 
     return (
