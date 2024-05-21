@@ -1,7 +1,11 @@
+"use client"
+
 import Link from "next/link"
 
 import { routes } from "@/lib/routes"
-import LogoutButton from "./LogoutButton"
+import LogoutButton from "../LogoutButton"
+import { Button } from "@/components/ui/button"
+import { memo } from "react"
 
 type TLandingNavProps = {
     isLoggedIn: boolean
@@ -25,7 +29,11 @@ const LandingNav = ({ isLoggedIn }: TLandingNavProps) => {
                             >
                                 Settings
                             </Link>
-                            <LogoutButton />
+                            <LogoutButton
+                                as={memo(Button)}
+                                variant="ghost"
+                                className="text-sm font-medium transition-colors hover:text-primary hover:bg-orange-400/30"
+                            />
                         </>
                     ) : (
                         <>

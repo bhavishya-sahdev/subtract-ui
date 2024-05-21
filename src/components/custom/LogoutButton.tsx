@@ -1,14 +1,30 @@
-"use client"
-
 import { handleLogout } from "@/lib/serverUtils"
-import { DropdownMenuItem } from "../ui/dropdown-menu"
-import { LogOut } from "lucide-react"
 
-export default function LogoutButton() {
+import React from "react"
+
+type TLogoutButtonProps<
+    T extends keyof JSX.IntrinsicElements | React.ComponentType<any>
+> = {
+    as?: T
+} & (T extends React.ComponentType<infer P>
+    ? P
+    : T extends keyof JSX.IntrinsicElements
+    ? JSX.IntrinsicElements[T]
+    : never)
+
+const LogoutButton = <
+    T extends keyof JSX.IntrinsicElements | React.ComponentType<any>
+>({
+    as: Component = "button",
+    onClick,
+    children,
+    ...props
+}: TLogoutButtonProps<T>) => {
     return (
-        <DropdownMenuItem onClick={() => handleLogout()}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Log out
-        </DropdownMenuItem>
+        <Component {...props} onClick={() => handleLogout()}>
+            {children ? children : "Logout"}
+        </Component>
     )
 }
+
+export default LogoutButton

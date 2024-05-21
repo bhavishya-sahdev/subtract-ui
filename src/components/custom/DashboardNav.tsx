@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 
 import { GearIcon } from "@radix-ui/react-icons"
@@ -15,6 +17,7 @@ import {
 import { routes } from "@/lib/routes"
 import { TAxiosUserDetails } from "@/lib/types"
 import LogoutButton from "./LogoutButton"
+import { LogOut } from "lucide-react"
 
 type TDashboardNavProps = {
     user: TAxiosUserDetails
@@ -84,7 +87,10 @@ const DashboardNav = ({ user }: TDashboardNavProps) => {
                                     Settings
                                 </DropdownMenuItem>
                             </Link>
-                            <LogoutButton />
+                            <LogoutButton as={DropdownMenuItem}>
+                                <LogOut className="mr-2 h-4 w-4" />
+                                Log out
+                            </LogoutButton>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
