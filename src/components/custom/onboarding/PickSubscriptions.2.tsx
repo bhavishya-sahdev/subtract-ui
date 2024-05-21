@@ -33,7 +33,7 @@ export default function PickSubscriptions() {
                                 key={service.value}
                                 value={service.value}
                                 aria-label={`Select ${service.label}`}
-                                className="flex flex-col items-center border-2 gap-2 p-2 rounded-md h-24"
+                                className="flex flex-col items-center gap-2 p-2 rounded-md w-24 h-24 box-border"
                             >
                                 <Avatar>
                                     <AvatarImage
