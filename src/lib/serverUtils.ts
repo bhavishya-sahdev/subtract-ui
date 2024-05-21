@@ -56,7 +56,6 @@ export const fetchUserSubscriptions = cache(async () => {
 
 export async function handleLogout() {
     const cookieStore = cookies()
-    console.log(cookieStore.get("token"))
     cookieStore.delete("token")
     redirect("/")
 }
