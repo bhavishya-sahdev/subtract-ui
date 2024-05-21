@@ -4,11 +4,39 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useOnboardingStore } from "@/state/onboarding"
-import { streamingServices } from "@/state/staticData"
+import {
+    streamingData,
+    streamingDataID,
+    streamingServices,
+} from "@/state/staticData"
+import { xor } from "lodash"
 
 export default function PickSubscriptions() {
-    const { setActivePage, selectedServices, setSelectedServices } =
-        useOnboardingStore()
+    const {
+        setActivePage,
+        selectedServices,
+        addCreatedSubscription,
+        removeCreatedSubscription,
+        setSelectedServices,
+    } = useOnboardingStore()
+
+    const handleToggleSelection = (v: streamingDataID[]) => {
+        const diff = xor(v, selectedServices)[0]
+
+        // add service to the list
+        if (v.length > selectedServices.length) {
+            addCreatedSubscription({
+                id: streamingData[diff].id,
+                currencyId: "CURRENCY",
+                name: streamingData[diff].name,
+                renewalAmount: 0,
+                subscribedOn: new Date(),
+            })
+        } else {
+            removeCreatedSubscription(diff)
+        }
+        setSelectedServices(v)
+    }
 
     return (
         <div>
@@ -23,9 +51,9 @@ export default function PickSubscriptions() {
                         type="multiple"
                         className="grid grid-cols-3 gap-4"
                         size="custom"
-                        onValueChange={(v) => {
-                            setSelectedServices(v)
-                        }}
+                        onValueChange={(v: streamingDataID[]) =>
+                            handleToggleSelection(v)
+                        }
                         value={selectedServices}
                     >
                         {streamingServices.map((service) => (

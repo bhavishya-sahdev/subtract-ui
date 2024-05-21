@@ -47,4 +47,44 @@ export const streamingServices = [
         initials: "SP",
         logoUrl: "https://example.com/spotfiy-logo.png",
     },
-]
+] as const
+
+export type streamingDataID = (typeof streamingServices)[number]["value"]
+
+export const streamingData: Record<
+    streamingDataID,
+    { id: streamingDataID; name: string }
+> = {
+    prime: {
+        id: "prime",
+        name: "Amazon Prime",
+    },
+    netflix: {
+        id: "netflix",
+        name: "Netflix",
+    },
+    hulu: {
+        id: "hulu",
+        name: "Hulu",
+    },
+    disney: {
+        id: "disney",
+        name: "Disney+",
+    },
+    hbomax: {
+        id: "hbomax",
+        name: "HBO MAX",
+    },
+    appletv: {
+        id: "appletv",
+        name: "Apple TV",
+    },
+    paramount: {
+        id: "paramount",
+        name: "Paramount+",
+    },
+    spotify: {
+        id: "spotify",
+        name: "Spotify",
+    },
+}
