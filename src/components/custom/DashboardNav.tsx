@@ -21,7 +21,7 @@ type TDashboardNavProps = {
 }
 const DashboardNav = ({ user }: TDashboardNavProps) => {
     return (
-        <div className="border-b">
+        <nav className="border-b">
             <div className="flex h-16 items-center px-4">
                 <div className="flex items-center space-x-4 lg:space-x-6 mx-4">
                     <Link
@@ -89,7 +89,7 @@ const DashboardNav = ({ user }: TDashboardNavProps) => {
                     </DropdownMenu>
                 </div>
             </div>
-        </div>
+        </nav>
     )
 }
 
