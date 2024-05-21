@@ -5,15 +5,7 @@ import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
 import { routes } from "@/lib/routes"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { client } from "@/lib/axiosClient"
@@ -22,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+
 const FormSchema = z.object({
     name: z.string(),
     email: z.string().email(),
@@ -51,12 +44,9 @@ export default function SignupForm() {
                 if (typeof res.data.error != "string")
                     for (const field in FormSchema.shape) {
                         if (res.data.error[field])
-                            form.setError(
-                                field as keyof typeof FormSchema.shape,
-                                {
-                                    message: res.data.error[field][0],
-                                }
-                            )
+                            form.setError(field as keyof typeof FormSchema.shape, {
+                                message: res.data.error[field][0],
+                            })
                     }
                 else
                     toast({
@@ -91,14 +81,9 @@ export default function SignupForm() {
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Max Dwayne"
-                                            {...field}
-                                        />
+                                        <Input placeholder="Max Dwayne" {...field} />
                                     </FormControl>
-                                    <FormDescription>
-                                        This is your public display name.
-                                    </FormDescription>
+                                    <FormDescription>This is your public display name.</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -110,10 +95,7 @@ export default function SignupForm() {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="m@example.com"
-                                            {...field}
-                                        />
+                                        <Input placeholder="m@example.com" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -132,14 +114,8 @@ export default function SignupForm() {
                                 </FormItem>
                             )}
                         />
-                        <Button
-                            type="submit"
-                            className="w-full mt-4"
-                            disabled={inProgress}
-                        >
-                            {inProgress && (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            )}
+                        <Button type="submit" className="w-full mt-4" disabled={inProgress}>
+                            {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Create an account
                         </Button>
                     </div>
