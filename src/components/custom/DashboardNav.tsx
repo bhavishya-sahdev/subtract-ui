@@ -28,6 +28,12 @@ const DashboardNav = ({ user }: TDashboardNavProps) => {
             <div className="flex h-16 items-center px-4">
                 <div className="flex items-center space-x-4 lg:space-x-6 mx-4">
                     <Link
+                        href={routes.DEFAULT}
+                        className="text-sm font-medium transition-colors hover:text-primary"
+                    >
+                        Home
+                    </Link>
+                    <Link
                         href={routes.dashboard.overview}
                         className="text-sm font-medium transition-colors hover:text-primary"
                     >
