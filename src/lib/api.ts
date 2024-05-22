@@ -7,5 +7,8 @@ const api = {
         getDetails: "/user",
         getSubscriptions: "/user/subscriptions",
     },
+    utils: {
+        currency: "/currency",
+    },
 }
 export default api
