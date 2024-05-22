@@ -4,18 +4,12 @@ import { client } from "./axiosClient"
 import api from "./api"
 import { cookies } from "next/headers"
 import { cache } from "react"
-import {
-    TAxiosErrorResponse,
-    TAxiosSuccessResponse,
-    TAxiosUserDetails,
-} from "./types"
+import { TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails } from "./types"
 import { redirect } from "next/navigation"
+import { TCurrency } from "@/state/onboarding"
 
 export const fetchUserDetails = cache(
-    async (): Promise<
-        | TAxiosSuccessResponse<TAxiosUserDetails>
-        | TAxiosErrorResponse<{ message: string }>
-    > => {
+    async (): Promise<TAxiosSuccessResponse<TAxiosUserDetails> | TAxiosErrorResponse<{ message: string }>> => {
         "use server"
         const cookieStore = cookies()
         const token = cookieStore.get("token")
@@ -30,6 +24,20 @@ export const fetchUserDetails = cache(
             return {
                 data: null,
                 error: { message: "Failed to load user data" },
+            }
+        }
+    }
+)
+
+export const fetchAllCurrencies = cache(
+    async (): Promise<TAxiosSuccessResponse<TCurrency[]> | TAxiosErrorResponse<{ message: string }>> => {
+        try {
+            const res = await client.get(api.utils.currency)
+            return res.data
+        } catch (error) {
+            return {
+                data: null,
+                error: { message: "Failed to load currency list" },
             }
         }
     }
