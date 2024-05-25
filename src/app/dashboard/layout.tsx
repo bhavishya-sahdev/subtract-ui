@@ -8,16 +8,11 @@ export default async function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    const user = await fetchUserDetails()
     const subscriptions = await fetchUserSubscriptions()
-    console.log(subscriptions)
-    if (user.error !== null) redirect(routes.auth.login)
-
-    if (!user.data.isOnboardingComplete) redirect(routes.dashboard.onboarding)
 
     return (
         <>
-            <DashboardNav user={user.data} />
+            <DashboardNav />
             <div className="flex-1 space-y-4 p-8 pt-6">{children}</div>
         </>
     )

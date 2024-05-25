@@ -7,16 +7,5 @@ export default async function AuthLayout({
 }: {
     children: React.ReactNode
 }) {
-    const user = await fetchUserDetails()
-
-    if (user.error === null) {
-        if (user.data.isOnboardingComplete) redirect(routes.dashboard.overview)
-        else redirect(routes.dashboard.onboarding)
-    }
-
-    return (
-        <div className="h-full flex items-center justify-center">
-            {children}
-        </div>
-    )
+    return <div className="h-full flex items-center justify-center">{children}</div>
 }

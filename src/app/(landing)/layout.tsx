@@ -8,13 +8,9 @@ export default async function LandingLayout({
 }: {
     children: React.ReactNode
 }) {
-    const user = await fetchUserDetails()
-
     return (
         <div className="h-full flex flex-col">
-            <LandingNav
-                isLoggedIn={user.data !== null && user.error === null}
-            />
+            <LandingNav />
             {children}
         </div>
     )
