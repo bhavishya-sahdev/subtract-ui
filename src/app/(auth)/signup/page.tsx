@@ -14,6 +14,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { fetchUserDetails } from "@/lib/serverUtils"
+import { useUserStore } from "@/state/context/UserContext"
 
 const FormSchema = z.object({
     name: z.string(),
@@ -24,6 +26,7 @@ const FormSchema = z.object({
 export default function SignupForm() {
     const { toast } = useToast()
     const { push } = useRouter()
+    const setUser = useUserStore((state) => state.setUser)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -56,7 +59,15 @@ export default function SignupForm() {
                 /** if error, handle errors and return */
                 return
             }
-            push(routes.dashboard.overview)
+
+            // set user data in context
+            const user = await fetchUserDetails()
+
+            // if fails show error and don't redirect
+            if (user.data) setUser(user.data)
+            else return toast({ title: "Failed to get user details", description: "Please try again later" })
+
+            push(user.data.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
         } catch (e: any) {
             toast({
                 variant: "destructive",
