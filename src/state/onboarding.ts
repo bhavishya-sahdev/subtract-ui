@@ -1,7 +1,6 @@
 import { create } from "zustand"
 import { fetchAllCurrencies } from "@/lib/serverUtils"
-
-type TSetterFunction<T extends any[]> = (...args: T) => void
+import { TSetterFunction } from "@/lib/types"
 
 type TSubscription = {
     id: string
