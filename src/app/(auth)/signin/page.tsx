@@ -4,14 +4,7 @@ import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 
 import { Input } from "@/components/ui/input"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { z } from "zod"
 import { client } from "@/lib/axiosClient"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -22,6 +15,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { fetchUserDetails } from "@/lib/serverUtils"
+import { useUserStore } from "@/state/context/UserContext"
 
 const FormSchema = z.object({
     email: z.string(),
@@ -30,6 +25,7 @@ const FormSchema = z.object({
 export default function LoginForm() {
     const { toast } = useToast()
     const { push } = useRouter()
+    const setUser = useUserStore((state) => state.setUser)
     // initialize form
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -50,12 +46,9 @@ export default function LoginForm() {
                 if (typeof res.data.error != "string")
                     for (const field in FormSchema.shape) {
                         if (res.data.error[field])
-                            form.setError(
-                                field as keyof typeof FormSchema.shape,
-                                {
-                                    message: res.data.error[field][0],
-                                }
-                            )
+                            form.setError(field as keyof typeof FormSchema.shape, {
+                                message: res.data.error[field][0],
+                            })
                     }
                 else
                     toast({
@@ -65,7 +58,15 @@ export default function LoginForm() {
                 /** if error, handle errors and return */
                 return
             }
-            push(routes.dashboard.overview)
+
+            // set user data in context
+            const user = await fetchUserDetails()
+
+            // if fails show error and don't redirect
+            if (user.data) setUser(user.data)
+            else return toast({ title: "Failed to get user details", description: "Please try again later" })
+
+            push(user.data.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
         } catch (e: any) {
             toast({
                 variant: "destructive",
@@ -79,9 +80,7 @@ export default function LoginForm() {
     return (
         <div className="w-full max-w-sm p-4">
             <p className="text-3xl mb-1">Login</p>
-            <p className="mb-8">
-                Enter your email below to login to your account.
-            </p>
+            <p className="mb-8">Enter your email below to login to your account.</p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="block">
                     <div className="grid gap-2">
@@ -92,10 +91,7 @@ export default function LoginForm() {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="m@example.com"
-                                            {...field}
-                                        />
+                                        <Input placeholder="m@example.com" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -115,14 +111,8 @@ export default function LoginForm() {
                             )}
                         />
                     </div>
-                    <Button
-                        type="submit"
-                        className="w-full mt-4"
-                        disabled={inProgress}
-                    >
-                        {inProgress && (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        )}
+                    <Button type="submit" className="w-full mt-4" disabled={inProgress}>
+                        {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Sign in
                     </Button>
                 </form>
