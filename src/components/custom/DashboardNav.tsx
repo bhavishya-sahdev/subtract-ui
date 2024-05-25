@@ -15,22 +15,19 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { routes } from "@/lib/routes"
-import { TAxiosUserDetails } from "@/lib/types"
 import LogoutButton from "./LogoutButton"
 import { LogOut } from "lucide-react"
+import { useUserStore } from "@/state/context/UserContext"
 
-type TDashboardNavProps = {
-    user: TAxiosUserDetails
-}
-const DashboardNav = ({ user }: TDashboardNavProps) => {
+const DashboardNav = () => {
+    const user = useUserStore((state) => state.user)
+
+    if (user === null) return null
     return (
         <nav className="border-b">
             <div className="flex h-16 items-center px-4">
                 <div className="flex items-center space-x-4 lg:space-x-6 mx-4">
-                    <Link
-                        href={routes.DEFAULT}
-                        className="text-sm font-medium transition-colors hover:text-primary"
-                    >
+                    <Link href={routes.DEFAULT} className="text-sm font-medium transition-colors hover:text-primary">
                         Home
                     </Link>
                     <Link
@@ -53,37 +50,20 @@ const DashboardNav = ({ user }: TDashboardNavProps) => {
                     </Link>
                 </div>
                 <div className="ml-auto flex items-center space-x-4">
-                    <Input
-                        type="search"
-                        placeholder="Search..."
-                        className="md:w-[100px] lg:w-[300px]"
-                    />
+                    <Input type="search" placeholder="Search..." className="md:w-[100px] lg:w-[300px]" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                className="relative h-8 w-8 rounded-full"
-                            >
+                            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                                 <Avatar>
-                                    <AvatarFallback>
-                                        {user.name.replace(" ", "").slice(0, 2)}
-                                    </AvatarFallback>
+                                    <AvatarFallback>{user.name.replace(" ", "").slice(0, 2)}</AvatarFallback>
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            className="w-56"
-                            align="end"
-                            forceMount
-                        >
+                        <DropdownMenuContent className="w-56" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">
-                                        {user.name}
-                                    </p>
-                                    <p className="text-xs leading-none text-muted-foreground">
-                                        {user.email}
-                                    </p>
+                                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
