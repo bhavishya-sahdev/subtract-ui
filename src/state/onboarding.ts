@@ -47,6 +47,9 @@ type TOnboardingStore = {
 
     prefabs: TPrefab[]
     setPrefabs: TSetterFunction<[]>
+
+    selectedServiceId: string | null
+    setSelectedServiceId: TSetterFunction<[string]>
 }
 
 export const useOnboardingStore = create<TOnboardingStore>((set, get) => ({
@@ -80,4 +83,7 @@ export const useOnboardingStore = create<TOnboardingStore>((set, get) => ({
         const res = await fetchPrefabs()
         if (res.data) set({ prefabs: res.data })
     },
+
+    selectedServiceId: null,
+    setSelectedServiceId: (value) => set({ selectedServiceId: value }),
 }))
