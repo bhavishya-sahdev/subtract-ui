@@ -4,90 +4,96 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useOnboardingStore } from "@/state/onboarding"
-import {
-    streamingData,
-    streamingDataID,
-    streamingServices,
-} from "@/state/staticData"
-import { xor } from "lodash"
+import { xor, intersection, union } from "lodash"
 
 export default function PickSubscriptions() {
     const {
         setActivePage,
-        selectedServices,
+        createdSubscriptions,
         addCreatedSubscription,
         removeCreatedSubscription,
-        setSelectedServices,
+        prefabs,
+        selectedPrefabs,
+        setSelectedPrefabs,
     } = useOnboardingStore()
 
-    const handleToggleSelection = (v: streamingDataID[]) => {
-        const diff = xor(v, selectedServices)[0]
+    const initiateNewSubscription = (id: string, name: string) => {
+        addCreatedSubscription({
+            id,
+            name,
+            currencyId: "",
+            renewalAmount: 0,
+            subscribedOn: new Date(),
+        })
+    }
 
-        // add service to the list
-        if (v.length > selectedServices.length) {
+    const handleToggleSelection = (v: string[]) => {
+        let updated: string[] = []
+        const diff = xor(v, selectedPrefabs)[0]
+        const selectedPrefab = prefabs.filter((p) => p.id === diff)[0]
+
+        if (v.length > selectedPrefabs.length) {
+            updated = union(v, selectedPrefabs)
+            initiateNewSubscription(selectedPrefab.id, selectedPrefab.name)
+        } else {
+            updated = intersection(v, selectedPrefabs)
+            removeCreatedSubscription(selectedPrefab.id)
+        }
+        setSelectedPrefabs(updated)
+    }
+
+    const handleSubmit = () => {
+        if (createdSubscriptions.length == 0) {
             addCreatedSubscription({
-                id: streamingData[diff].id,
-                currencyId: "CURRENCY",
-                name: streamingData[diff].name,
+                id: "",
+                currencyId: "",
+                name: "",
                 renewalAmount: 0,
                 subscribedOn: new Date(),
             })
-        } else {
-            removeCreatedSubscription(diff)
         }
-        setSelectedServices(v)
+
+        setActivePage(2)
     }
 
     return (
         <div>
             <p className="text-2xl">Add subscriptions</p>
-            <p>
-                Pick from the list below to get you started. You can always skip
-                this step.
-            </p>
+            <p>Pick from the list below to get you started. You can always skip this step.</p>
             <Card className="mt-4 max-h-[400px] overflow-auto">
                 <CardContent className="p-4">
                     <ToggleGroup
                         type="multiple"
                         className="grid grid-cols-3 gap-4"
                         size="custom"
-                        onValueChange={(v: streamingDataID[]) =>
-                            handleToggleSelection(v)
-                        }
-                        value={selectedServices}
+                        onValueChange={(v: string[]) => handleToggleSelection(v)}
+                        value={selectedPrefabs}
                     >
-                        {streamingServices.map((service) => (
+                        {prefabs.map((prefab) => (
                             <ToggleGroupItem
-                                key={service.value}
-                                value={service.value}
-                                aria-label={`Select ${service.label}`}
+                                key={prefab.id}
+                                value={prefab.id}
+                                aria-label={`Select ${prefab.name}`}
                                 className="flex flex-col items-center gap-2 p-2 rounded-md w-24 h-24 box-border"
                             >
                                 <Avatar>
-                                    <AvatarImage
-                                        src={service.logoUrl}
-                                        alt={service.label}
-                                    />
-                                    <AvatarFallback>
-                                        {service.initials}
-                                    </AvatarFallback>
+                                    <AvatarImage src={prefab.image} alt={prefab.name} />
+                                    <AvatarFallback>{prefab.name.replace(" ", "").slice(0, 2)}</AvatarFallback>
                                 </Avatar>
                                 <Label
                                     className={`${
-                                        service.label.length > 10
-                                            ? "line-clamp-2 max-w-16"
-                                            : "truncate max-w-[100px]"
+                                        prefab.name.length > 10 ? "line-clamp-2 max-w-16" : "truncate max-w-[100px]"
                                     } text-center`}
                                 >
-                                    {service.label}
+                                    {prefab.name}
                                 </Label>
                             </ToggleGroupItem>
                         ))}
                     </ToggleGroup>
                 </CardContent>
             </Card>
-            <Button className="mt-4" onClick={() => setActivePage(2)}>
-                {selectedServices.length > 0 ? "Next" : "Skip"}
+            <Button className="mt-4" onClick={handleSubmit}>
+                {selectedPrefabs.length > 0 ? "Next" : "Skip"}
             </Button>
         </div>
     )
