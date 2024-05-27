@@ -1,6 +1,7 @@
 import { create } from "zustand"
-import { fetchAllCurrencies } from "@/lib/serverUtils"
+import { fetchAllCurrencies, fetchPrefabs } from "@/lib/serverUtils"
 import { TSetterFunction } from "@/lib/types"
+import { z } from "zod"
 
 type TSubscription = {
     id: string
@@ -21,28 +22,36 @@ export type TCurrency = {
     namePlural: string
 }
 
+export const PrefabSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    image: z.string(),
+})
+
+export type TPrefab = z.infer<typeof PrefabSchema>
+
 type TOnboardingStore = {
     activePage: number
     setActivePage: TSetterFunction<[number]>
-
-    selectedServices: string[]
-    setSelectedServices: TSetterFunction<[string[]]>
 
     createdSubscriptions: TSubscription[]
     addCreatedSubscription: TSetterFunction<[TSubscription]>
     removeCreatedSubscription: TSetterFunction<[string]>
     setCreatedSubscriptions: TSetterFunction<[TSubscription[]]>
 
+    selectedPrefabs: string[]
+    setSelectedPrefabs: TSetterFunction<[string[]]>
+
     currencies: TCurrency[]
     setCurrencies: TSetterFunction<[]>
+
+    prefabs: TPrefab[]
+    setPrefabs: TSetterFunction<[]>
 }
 
 export const useOnboardingStore = create<TOnboardingStore>((set, get) => ({
     activePage: 0,
     setActivePage: (newActivePage) => set({ activePage: newActivePage }),
-
-    selectedServices: [],
-    setSelectedServices: (values) => set({ selectedServices: values }),
 
     createdSubscriptions: [],
     addCreatedSubscription: (value) => {
@@ -57,9 +66,18 @@ export const useOnboardingStore = create<TOnboardingStore>((set, get) => ({
     },
     setCreatedSubscriptions: (values) => set({ createdSubscriptions: values }),
 
+    selectedPrefabs: [],
+    setSelectedPrefabs: (values) => set({ selectedPrefabs: values }),
+
     currencies: [],
     setCurrencies: async () => {
         const res = await fetchAllCurrencies()
         if (res.data) set({ currencies: res.data })
+    },
+
+    prefabs: [],
+    setPrefabs: async () => {
+        const res = await fetchPrefabs()
+        if (res.data) set({ prefabs: res.data })
     },
 }))
