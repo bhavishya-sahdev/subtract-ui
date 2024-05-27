@@ -9,6 +9,7 @@ const api = {
     },
     utils: {
         currency: "/currency",
+        prefab: "/prefab",
     },
 }
 export default api
