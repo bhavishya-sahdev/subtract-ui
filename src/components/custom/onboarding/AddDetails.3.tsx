@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCallback, useState } from "react"
 import { useOnboardingStore } from "@/state/onboarding"
-import { streamingServices } from "@/state/staticData"
 import { useToast } from "@/components/ui/use-toast"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,7 +25,6 @@ import { routes } from "@/lib/routes"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useRouter } from "next/navigation"
 
-import currencies from "@/lib/currencies.json"
 import { Minus, Plus } from "lucide-react"
 
 const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"])
@@ -41,16 +39,18 @@ const FormSchema = z.object({
 })
 
 export default function AddDetails() {
-    const { setActivePage, selectedServices, createdSubscriptions } = useOnboardingStore()
+    const { setActivePage, createdSubscriptions, currencies } = useOnboardingStore()
 
     const { toast } = useToast()
     const { push } = useRouter()
 
+    const [currentItemIndex, setCurrentItemIndex] = useState(0)
+
     const { watch, ...form } = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            name: createdSubscriptions[0].name,
-            subscribedOn: createdSubscriptions[0].subscribedOn,
+            name: createdSubscriptions.length > 0 ? createdSubscriptions[0].name : "",
+            subscribedOn: createdSubscriptions.length > 0 ? createdSubscriptions[0].subscribedOn : undefined,
             renewalPeriodDays: 1,
         },
     })
@@ -58,13 +58,16 @@ export default function AddDetails() {
 
     const [inProgress, setInProgress] = useState(false)
 
-    const renderCurrencyText = useCallback((value: string) => {
-        const c = currencies.find((c) => c.code === value)
-        if (!c) return ""
+    const renderCurrencyText = useCallback(
+        (value: string) => {
+            const c = currencies.find((c) => c.code === value)
+            if (!c) return ""
 
-        if (c.code === c.symbol) return c.code
-        return `${c.code} (${c.symbol})`
-    }, [])
+            if (c.code === c.symbol) return c.code
+            return `${c.code} (${c.symbol})`
+        },
+        [currencies]
+    )
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
         try {
@@ -102,7 +105,7 @@ export default function AddDetails() {
     return (
         <div>
             <Card className="box-border my-4">
-                <CardContent className="py-2 px-4 grid gap-4 grid-cols-[max-content_2px_1fr] items-center">
+                <CardContent className="py-1 px-4 grid gap-3 grid-cols-[max-content_2px_1fr] items-center">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button size="icon" variant="ghost" className="rounded-full border-dashed border-2">
@@ -116,24 +119,32 @@ export default function AddDetails() {
                     </DropdownMenu>
                     <Separator orientation="vertical" />
                     <div className="flex overflow-auto gap-6 pt-1 pb-3">
-                        {selectedServices.map((serviceValue) => {
-                            const service = streamingServices.find((service) => service.value === serviceValue)
-
-                            return service ? (
-                                <div className="flex flex-col items-center gap-2 w-16" key={service.label}>
+                        {createdSubscriptions.map((service, idx) => {
+                            return (
+                                <button
+                                    disabled={currentItemIndex === idx}
+                                    className={cn(
+                                        "flex flex-col items-center gap-2 w-16 p-2 border rounded-md border-transparent",
+                                        currentItemIndex === idx && "border-stone-800"
+                                    )}
+                                    key={service.name}
+                                    onClick={() => setCurrentItemIndex(idx)}
+                                >
                                     <Avatar>
-                                        <AvatarImage src={service.logoUrl} alt={service.label} />
-                                        <AvatarFallback>{service.initials}</AvatarFallback>
+                                        {/* <AvatarImage src={service.logoUrl} alt={service.label} /> */}
+                                        <AvatarFallback>{service.name.replace(" ", "").slice(0, 2)}</AvatarFallback>
                                     </Avatar>
-                                    <Label className="line-clamp-1 w-20 text-center">{service.label}</Label>
-                                </div>
-                            ) : null
+                                    <Label className="line-clamp-1 w-20 text-center">{service.name}</Label>
+                                </button>
+                            )
                         })}
                     </div>
                 </CardContent>
             </Card>
+
             <p className="text-2xl pt-4">Add details</p>
-            <p className="pb-4">This is where the magic happens.</p>
+            <p className="pb-4 text-muted-foreground">This is where the magic happens.</p>
+
             <Form watch={watch} {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="block">
                     <div className="space-y-4">
