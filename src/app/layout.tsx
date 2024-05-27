@@ -26,7 +26,7 @@ export default async function RootLayout({
     const header_url = headersList.get("x-url") || ""
 
     if (user === null) {
-        if (header_url.startsWith("/dashboard/")) redirect(routes.DEFAULT)
+        if (header_url.startsWith("/dashboard/") || header_url.startsWith("/onboarding")) redirect(routes.DEFAULT)
     } else {
         if (header_url.startsWith("/signin") || header_url.startsWith("/signup")) redirect(routes.dashboard.DEFAULT)
         if (header_url.startsWith("/dashboard") && user.isOnboardingComplete === false)
