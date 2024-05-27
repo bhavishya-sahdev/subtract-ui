@@ -1,7 +1,7 @@
 "use client"
-import AddDetails from "@/components/custom/onboarding/AddDetails.3"
-import GetStarted from "@/components/custom/onboarding/GetStarted.1"
-import PickSubscriptions from "@/components/custom/onboarding/PickSubscriptions.2"
+import AddDetails from "@/components/custom/onboarding/pages/AddDetails.3"
+import GetStarted from "@/components/custom/onboarding/pages/GetStarted.1"
+import PickSubscriptions from "@/components/custom/onboarding/pages/PickSubscriptions.2"
 import { useOnboardingStore } from "@/state/onboarding"
 import { useEffect } from "react"
 
