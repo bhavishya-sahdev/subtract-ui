@@ -6,7 +6,7 @@ import { cookies } from "next/headers"
 import { cache } from "react"
 import { TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails } from "./types"
 import { redirect } from "next/navigation"
-import { TCurrency } from "@/state/onboarding"
+import { TCurrency, TPrefab } from "@/state/onboarding"
 
 export const fetchUserDetails = cache(
     async (): Promise<TAxiosSuccessResponse<TAxiosUserDetails> | TAxiosErrorResponse<{ message: string }>> => {
@@ -61,6 +61,20 @@ export const fetchUserSubscriptions = cache(async () => {
         }
     }
 })
+
+export const fetchPrefabs = cache(
+    async (): Promise<TAxiosSuccessResponse<TPrefab[]> | TAxiosErrorResponse<{ message: string }>> => {
+        try {
+            const res = await client.get(api.utils.prefab)
+            return res.data
+        } catch (error) {
+            return {
+                data: null,
+                error: { message: "Failed to load prefab list" },
+            }
+        }
+    }
+)
 
 export async function handleLogout() {
     const cookieStore = cookies()
