@@ -1,10 +1,8 @@
+import { Button, Card, CardContent, Label, ToggleGroup, ToggleGroupItem } from "@/components/ui"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useOnboardingStore } from "@/state/onboarding"
 import { xor, intersection, union } from "lodash"
+import { v4 as uuid } from "uuid"
 
 export default function PickSubscriptions() {
     const {
@@ -15,6 +13,7 @@ export default function PickSubscriptions() {
         prefabs,
         selectedPrefabs,
         setSelectedPrefabs,
+        setSelectedServiceId,
     } = useOnboardingStore()
 
     const initiateNewSubscription = (id: string, name: string) => {
@@ -43,14 +42,20 @@ export default function PickSubscriptions() {
     }
 
     const handleSubmit = () => {
+        // default the selected subscription to either a newly created empty object's id
+        // the first selected service's id
         if (createdSubscriptions.length == 0) {
+            const id = uuid()
             addCreatedSubscription({
-                id: "",
+                id: id,
                 currencyId: "",
                 name: "",
                 renewalAmount: 0,
                 subscribedOn: new Date(),
             })
+            setSelectedServiceId(id)
+        } else {
+            setSelectedServiceId(createdSubscriptions[0].id)
         }
 
         setActivePage(2)
