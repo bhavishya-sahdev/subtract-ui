@@ -37,6 +37,7 @@ type TOnboardingStore = {
     createdSubscriptions: TSubscription[]
     addCreatedSubscription: TSetterFunction<[TSubscription]>
     removeCreatedSubscription: TSetterFunction<[string]>
+    updateCreatedSubscription: TSetterFunction<[string, Partial<TSubscription>]>
     setCreatedSubscriptions: TSetterFunction<[TSubscription[]]>
 
     selectedPrefabs: string[]
@@ -68,6 +69,15 @@ export const useOnboardingStore = create<TOnboardingStore>((set, get) => ({
         set({ createdSubscriptions: updatedSubscriptions })
     },
     setCreatedSubscriptions: (values) => set({ createdSubscriptions: values }),
+    updateCreatedSubscription: (id, object) => {
+        const updatedSubscriptions = get().createdSubscriptions.map((ob) => {
+            if (ob.id === id) {
+                return { ...ob, ...object }
+            }
+            return ob
+        })
+        set({ createdSubscriptions: updatedSubscriptions })
+    },
 
     selectedPrefabs: [],
     setSelectedPrefabs: (values) => set({ selectedPrefabs: values }),
