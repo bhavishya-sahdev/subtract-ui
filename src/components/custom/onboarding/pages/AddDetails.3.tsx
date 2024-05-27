@@ -86,6 +86,29 @@ export default function AddDetails() {
         [currencies]
     )
 
+    const handleRemove = () => {
+        // check if the item being removed is a prefab
+        setSelectedPrefabs(selectedPrefabs.filter((p) => p !== selectedServiceId))
+
+        if (createdSubscriptions.length > 1) {
+            const updatedList = createdSubscriptions.filter((s) => s.id !== selectedServiceId)
+            setSelectedServiceId(updatedList[0].id)
+            setCreatedSubscriptions(updatedList)
+        } else {
+            const id = uuid()
+            setCreatedSubscriptions([
+                {
+                    id: id,
+                    currencyId: "",
+                    name: "",
+                    renewalAmount: 0,
+                    subscribedOn: new Date(),
+                },
+            ])
+            setSelectedServiceId(id)
+        }
+    }
+
     async function onSubmit(data: z.infer<typeof FormSchema>) {
         try {
             setInProgress(true)
@@ -118,6 +141,16 @@ export default function AddDetails() {
         }
         setInProgress(false)
     }
+
+    useEffect(() => {
+        // handle last item deletion logic elsewhere, probably on the delete action
+        const selectedSubscription = createdSubscriptions.filter((sub) => sub.id === selectedServiceId)[0]
+        form.reset(selectedSubscription)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedServiceId])
+
+    if (selectedServiceId === null) return
 
     return (
         <div>
@@ -363,6 +396,7 @@ export default function AddDetails() {
 
             {/* show auto generated previous payments */}
             <div className="space-x-2">
+                <Button className="mt-4" variant="destructive" onClick={handleRemove}>
                     Remove
                 </Button>
                 <Button className="mt-4">Add or Next or Finish</Button>
