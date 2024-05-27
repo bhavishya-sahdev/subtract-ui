@@ -24,6 +24,15 @@ const AddNewTopBar = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="start">
                         <DropdownMenuItem
+                            onSelect={() =>
+                                addCreatedSubscription({
+                                    id: uuid(),
+                                    name: "",
+                                    currencyId: "",
+                                    renewalAmount: 0,
+                                    subscribedOn: new Date(),
+                                })
+                            }
                         >
                             Create New
                         </DropdownMenuItem>
