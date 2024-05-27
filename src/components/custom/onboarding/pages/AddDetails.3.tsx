@@ -1,31 +1,41 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+    Button,
+    Calendar,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input,
+    Label,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    useToast,
+} from "@/components/ui"
 import { CalendarIcon } from "@radix-ui/react-icons"
-import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useOnboardingStore } from "@/state/onboarding"
-import { useToast } from "@/components/ui/use-toast"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { client } from "@/lib/axiosClient"
 import api from "@/lib/api"
 import { routes } from "@/lib/routes"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useRouter } from "next/navigation"
-
+import { v4 as uuid } from "uuid"
 import { Minus, Plus } from "lucide-react"
+import AddNewTopBar from "../AddNewTopBar"
 
 const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"])
 
@@ -39,12 +49,19 @@ const FormSchema = z.object({
 })
 
 export default function AddDetails() {
-    const { setActivePage, createdSubscriptions, currencies } = useOnboardingStore()
+    const {
+        createdSubscriptions,
+        currencies,
+        selectedServiceId,
+        updateCreatedSubscription,
+        setSelectedServiceId,
+        setCreatedSubscriptions,
+        selectedPrefabs,
+        setSelectedPrefabs,
+    } = useOnboardingStore()
 
     const { toast } = useToast()
     const { push } = useRouter()
-
-    const [currentItemIndex, setCurrentItemIndex] = useState(0)
 
     const { watch, ...form } = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -104,43 +121,7 @@ export default function AddDetails() {
 
     return (
         <div>
-            <Card className="box-border my-4">
-                <CardContent className="py-1 px-4 grid gap-3 grid-cols-[max-content_2px_1fr] items-center">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost" className="rounded-full border-dashed border-2">
-                                <Plus />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="start">
-                            <DropdownMenuItem>Create New</DropdownMenuItem>
-                            <DropdownMenuItem onSelect={() => setActivePage(1)}>Pick from list</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Separator orientation="vertical" />
-                    <div className="flex overflow-auto gap-6 pt-1 pb-3">
-                        {createdSubscriptions.map((service, idx) => {
-                            return (
-                                <button
-                                    disabled={currentItemIndex === idx}
-                                    className={cn(
-                                        "flex flex-col items-center gap-2 w-16 p-2 border rounded-md border-transparent",
-                                        currentItemIndex === idx && "border-stone-800"
-                                    )}
-                                    key={service.name}
-                                    onClick={() => setCurrentItemIndex(idx)}
-                                >
-                                    <Avatar>
-                                        {/* <AvatarImage src={service.logoUrl} alt={service.label} /> */}
-                                        <AvatarFallback>{service.name.replace(" ", "").slice(0, 2)}</AvatarFallback>
-                                    </Avatar>
-                                    <Label className="line-clamp-1 w-20 text-center">{service.name}</Label>
-                                </button>
-                            )
-                        })}
-                    </div>
-                </CardContent>
-            </Card>
+            <AddNewTopBar />
 
             <p className="text-2xl pt-4">Add details</p>
             <p className="pb-4 text-muted-foreground">This is where the magic happens.</p>
@@ -156,7 +137,17 @@ export default function AddDetails() {
                                     <div className="grid w-full max-w-sm items-center gap-1.5">
                                         <FormLabel htmlFor="service_name">Service Name</FormLabel>
                                         <FormControl>
-                                            <Input id="service_name" type="text" placeholder="Netflix" {...field} />
+                                            <Input
+                                                id="service_name"
+                                                type="text"
+                                                placeholder="Netflix"
+                                                {...field}
+                                                onBlur={() => {
+                                                    updateCreatedSubscription(selectedServiceId, {
+                                                        [field.name]: field.value,
+                                                    })
+                                                }}
+                                            />
                                         </FormControl>
 
                                         <FormMessage />
@@ -196,7 +187,12 @@ export default function AddDetails() {
                                                 <Calendar
                                                     mode="single"
                                                     selected={field.value}
-                                                    onSelect={field.onChange}
+                                                    onSelect={(v) => {
+                                                        updateCreatedSubscription(selectedServiceId, {
+                                                            [field.name]: v,
+                                                        })
+                                                        field.onChange(v)
+                                                    }}
                                                     disabled={(date) =>
                                                         date > new Date() || date < new Date("1900-01-01")
                                                     }
@@ -219,7 +215,14 @@ export default function AddDetails() {
                                     name="currencyId"
                                     render={({ field }) => (
                                         <FormItem className="w-[300px]">
-                                            <Select onValueChange={field.onChange}>
+                                            <Select
+                                                onValueChange={(v) => {
+                                                    updateCreatedSubscription(selectedServiceId, {
+                                                        [field.name]: v,
+                                                    })
+                                                    field.onChange(v)
+                                                }}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a currency">
                                                         {renderCurrencyText(field.value)}
@@ -250,6 +253,11 @@ export default function AddDetails() {
                                                     placeholder="120.00"
                                                     className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                     {...field}
+                                                    onBlur={() => {
+                                                        updateCreatedSubscription(selectedServiceId, {
+                                                            [field.name]: field.value,
+                                                        })
+                                                    }}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -268,7 +276,14 @@ export default function AddDetails() {
                                     render={({ field }) => (
                                         <FormItem className="w-[280px]">
                                             <FormControl>
-                                                <Select onValueChange={field.onChange}>
+                                                <Select
+                                                    onValueChange={(v) => {
+                                                        // updateCreatedSubscription(selectedServiceId, {
+                                                        //     [field.name]: v,
+                                                        // })
+                                                        field.onChange(v)
+                                                    }}
+                                                >
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select renewal period" />
                                                     </SelectTrigger>
@@ -305,6 +320,9 @@ export default function AddDetails() {
                                                                 "renewalPeriodDays",
                                                                 field.value ? field.value - 1 : 0
                                                             )
+                                                            // updateCreatedSubscription(selectedServiceId, {
+                                                            //     [field.name]: field.value,
+                                                            // })
                                                         }}
                                                     >
                                                         <Minus />
@@ -342,9 +360,9 @@ export default function AddDetails() {
                     </div>
                 </form>
             </Form>
+
             {/* show auto generated previous payments */}
             <div className="space-x-2">
-                <Button className="mt-4" variant="destructive">
                     Remove
                 </Button>
                 <Button className="mt-4">Add or Next or Finish</Button>
