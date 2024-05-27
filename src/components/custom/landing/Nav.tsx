@@ -1,34 +1,52 @@
 "use client"
 
 import Link from "next/link"
-
 import { routes } from "@/lib/routes"
 import LogoutButton from "../LogoutButton"
 import { Button } from "@/components/ui/button"
 import { memo } from "react"
 import { useUserStore } from "@/state/context/UserContext"
 
+const userLinks = [
+    {
+        href: routes.dashboard.overview,
+        label: "Dashboard",
+    },
+    {
+        href: routes.dashboard.settings,
+        label: "Settings",
+    },
+]
+
+const guestLinks = [
+    {
+        href: routes.auth.login,
+        label: "Login",
+    },
+    {
+        href: routes.auth.signup,
+        label: "Sign Up",
+    },
+]
+
 const LandingNav = () => {
     const user = useUserStore((state) => state.user)
 
     return (
-        <nav className="border-b">
+        <nav className="">
             <div className="flex h-16 items-center px-4">
                 <div className="ml-auto flex items-center space-x-4">
                     {user !== null ? (
                         <>
-                            <Link
-                                href={routes.dashboard.overview}
-                                className="text-sm font-medium transition-colors hover:text-primary"
-                            >
-                                Dashboard
-                            </Link>
-                            <Link
-                                href={routes.dashboard.overview}
-                                className="text-sm font-medium transition-colors hover:text-primary"
-                            >
-                                Settings
-                            </Link>
+                            {userLinks.map((link) => (
+                                <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className="text-sm font-medium transition-colors hover:text-primary"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                             <LogoutButton
                                 as={memo(Button)}
                                 variant="ghost"
@@ -37,18 +55,15 @@ const LandingNav = () => {
                         </>
                     ) : (
                         <>
-                            <Link
-                                href={routes.auth.login}
-                                className="text-sm font-medium transition-colors hover:text-primary"
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                href={routes.auth.signup}
-                                className="text-sm font-medium transition-colors hover:text-primary"
-                            >
-                                Sign Up
-                            </Link>
+                            {guestLinks.map((link) => (
+                                <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className="text-sm font-medium transition-colors hover:text-primary"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                         </>
                     )}
                 </div>
