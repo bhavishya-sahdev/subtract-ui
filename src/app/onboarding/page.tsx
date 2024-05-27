@@ -8,10 +8,11 @@ import { useEffect } from "react"
 const pages = [<GetStarted key="page1" />, <PickSubscriptions key="page2" />, <AddDetails key="page3" />]
 
 export default function Onboard() {
-    const { activePage, setCurrencies } = useOnboardingStore()
+    const { activePage, setCurrencies, setPrefabs } = useOnboardingStore()
 
     useEffect(() => {
         setCurrencies()
+        setPrefabs()
     }, [])
 
     return (
