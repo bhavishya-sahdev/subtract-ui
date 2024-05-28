@@ -31,6 +31,8 @@ const AddNewTopBar = () => {
                                     currencyId: "",
                                     renewalAmount: 0,
                                     subscribedOn: new Date(),
+                                    renewalPeriodEnum: "monthly",
+                                    renewalPeriodDays: 1,
                                 })
                             }
                         >

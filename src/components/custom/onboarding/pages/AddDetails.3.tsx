@@ -25,7 +25,12 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useCallback, useEffect, useState } from "react"
-import { useOnboardingStore } from "@/state/onboarding"
+import {
+    renewalPeriodEnum,
+    SubscriptionFormSchema,
+    TSubscriptionFormSchema,
+    useOnboardingStore,
+} from "@/state/onboarding"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -36,17 +41,6 @@ import { useRouter } from "next/navigation"
 import { v4 as uuid } from "uuid"
 import { Minus, Plus } from "lucide-react"
 import AddNewTopBar from "../AddNewTopBar"
-
-const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"])
-
-const FormSchema = z.object({
-    name: z.string(),
-    subscribedOn: z.date().optional(),
-    currencyId: z.string(),
-    renewalAmount: z.number().nonnegative(),
-    renewalPeriodEnum: renewalPeriodEnum.default("monthly"),
-    renewalPeriodDays: z.number().gt(1).default(1).optional(),
-})
 
 export default function AddDetails() {
     const {
@@ -63,8 +57,8 @@ export default function AddDetails() {
     const { toast } = useToast()
     const { push } = useRouter()
 
-    const { watch, ...form } = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
+    const { watch, ...form } = useForm<TSubscriptionFormSchema>({
+        resolver: zodResolver(SubscriptionFormSchema),
         defaultValues: {
             name: createdSubscriptions.length > 0 ? createdSubscriptions[0].name : "",
             subscribedOn: createdSubscriptions.length > 0 ? createdSubscriptions[0].subscribedOn : undefined,
@@ -103,13 +97,15 @@ export default function AddDetails() {
                     name: "",
                     renewalAmount: 0,
                     subscribedOn: new Date(),
+                    renewalPeriodEnum: "monthly",
+                    renewalPeriodDays: 1,
                 },
             ])
             setSelectedServiceId(id)
         }
     }
 
-    async function onSubmit(data: z.infer<typeof FormSchema>) {
+    async function onSubmit(data: TSubscriptionFormSchema) {
         try {
             setInProgress(true)
 
@@ -117,9 +113,9 @@ export default function AddDetails() {
 
             if (res.data.error !== null) {
                 if (typeof res.data.error != "string")
-                    for (const field in FormSchema.shape) {
+                    for (const field in SubscriptionFormSchema.shape) {
                         if (res.data.error[field])
-                            form.setError(field as keyof typeof FormSchema.shape, {
+                            form.setError(field as keyof typeof SubscriptionFormSchema.shape, {
                                 message: res.data.error[field][0],
                             })
                     }
@@ -249,6 +245,7 @@ export default function AddDetails() {
                                     render={({ field }) => (
                                         <FormItem className="w-[300px]">
                                             <Select
+                                                value={field.value !== "" ? field.value : undefined}
                                                 onValueChange={(v) => {
                                                     updateCreatedSubscription(selectedServiceId, {
                                                         [field.name]: v,
@@ -310,11 +307,13 @@ export default function AddDetails() {
                                         <FormItem className="w-[280px]">
                                             <FormControl>
                                                 <Select
-                                                    onValueChange={(v) => {
-                                                        // updateCreatedSubscription(selectedServiceId, {
-                                                        //     [field.name]: v,
-                                                        // })
+                                                    value={field.value}
+                                                    onValueChange={(v: z.infer<typeof renewalPeriodEnum>) => {
+                                                        console.log(v)
                                                         field.onChange(v)
+                                                        updateCreatedSubscription(selectedServiceId, {
+                                                            [field.name]: v,
+                                                        })
                                                     }}
                                                 >
                                                     <SelectTrigger>
@@ -348,14 +347,13 @@ export default function AddDetails() {
                                                         disabled={field.value != undefined && field.value <= 1}
                                                         onClick={(e) => {
                                                             e.preventDefault()
-
                                                             form.setValue(
                                                                 "renewalPeriodDays",
                                                                 field.value ? field.value - 1 : 0
                                                             )
-                                                            // updateCreatedSubscription(selectedServiceId, {
-                                                            //     [field.name]: field.value,
-                                                            // })
+                                                            updateCreatedSubscription(selectedServiceId, {
+                                                                [field.name]: field.value ? field.value - 1 : 0,
+                                                            })
                                                         }}
                                                     >
                                                         <Minus />
@@ -378,6 +376,9 @@ export default function AddDetails() {
                                                                 "renewalPeriodDays",
                                                                 field.value ? field.value + 1 : 0
                                                             )
+                                                            updateCreatedSubscription(selectedServiceId, {
+                                                                [field.name]: field.value ? field.value + 1 : 0,
+                                                            })
                                                         }}
                                                     >
                                                         <Plus />

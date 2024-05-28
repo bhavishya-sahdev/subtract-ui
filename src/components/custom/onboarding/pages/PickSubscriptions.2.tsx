@@ -23,6 +23,8 @@ export default function PickSubscriptions() {
             currencyId: "",
             renewalAmount: 0,
             subscribedOn: new Date(),
+            renewalPeriodEnum: "monthly",
+            renewalPeriodDays: 1,
         })
     }
 
@@ -52,6 +54,8 @@ export default function PickSubscriptions() {
                 name: "",
                 renewalAmount: 0,
                 subscribedOn: new Date(),
+                renewalPeriodEnum: "monthly",
+                renewalPeriodDays: 1,
             })
             setSelectedServiceId(id)
         } else {
