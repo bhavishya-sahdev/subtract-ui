@@ -15,9 +15,5 @@ export default function Onboard() {
         setPrefabs()
     }, [])
 
-    return (
-        <div className="flex mx-auto justify-center items-center flex-col gap-4 max-w-sm h-full">
-            {pages[activePage]}
-        </div>
-    )
+    return <div className="mx-auto gap-4 max-w-md h-full">{pages[activePage]}</div>
 }
