@@ -3,13 +3,19 @@ import { fetchAllCurrencies, fetchPrefabs } from "@/lib/serverUtils"
 import { TSetterFunction } from "@/lib/types"
 import { z } from "zod"
 
-type TSubscription = {
-    id: string
-    name: string
-    subscribedOn: Date
-    currencyId: string
-    renewalAmount: number
-}
+export const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"])
+
+export const SubscriptionFormSchema = z.object({
+    name: z.string(),
+    subscribedOn: z.date().optional(),
+    currencyId: z.string(),
+    renewalAmount: z.number().nonnegative(),
+    renewalPeriodEnum: renewalPeriodEnum.default("monthly"),
+    renewalPeriodDays: z.number().gt(1).default(1).optional(),
+})
+export type TSubscriptionFormSchema = z.infer<typeof SubscriptionFormSchema>
+
+export type TSubscription = TSubscriptionFormSchema & { id: string }
 
 export type TCurrency = {
     uuid: string
