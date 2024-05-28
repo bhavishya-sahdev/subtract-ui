@@ -39,8 +39,9 @@ import api from "@/lib/api"
 import { routes } from "@/lib/routes"
 import { useRouter } from "next/navigation"
 import { v4 as uuid } from "uuid"
-import { Minus, Plus } from "lucide-react"
+import { ArrowLeft, Minus, Plus } from "lucide-react"
 import AddNewTopBar from "../AddNewTopBar"
+import Payment from "../Payment"
 
 export default function AddDetails() {
     const {
@@ -150,6 +151,11 @@ export default function AddDetails() {
 
     return (
         <div>
+            <Button variant="ghost" className="space-x-2">
+                <ArrowLeft size="20" />
+                <span>Go Back</span>
+            </Button>
+
             <AddNewTopBar />
 
             <p className="text-2xl pt-4">Add details</p>
@@ -395,11 +401,19 @@ export default function AddDetails() {
                 </form>
             </Form>
 
+            <div className="my-4 space-y-1">
+                <p>Payments</p>
+                <div className="flex gap-4">
+                    <Payment variant="upcoming" /> <Payment variant="pending" /> <Payment />
+                </div>
+            </div>
+
             {/* show auto generated previous payments */}
             <div className="space-x-2">
                 <Button className="mt-4" variant="destructive" onClick={handleRemove}>
                     Remove
                 </Button>
+
                 <Button className="mt-4">Add or Next or Finish</Button>
             </div>
         </div>
