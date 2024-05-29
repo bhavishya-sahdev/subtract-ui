@@ -1,65 +1,89 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
+import { Button, Card, CardContent, Separator } from "@/components/ui"
 import { cn } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/onboarding"
-import { Plus } from "lucide-react"
+import { PlusCircle, Trash2 } from "lucide-react"
 import { v4 as uuid } from "uuid"
 
 const AddNewTopBar = () => {
-    const { createdSubscriptions, setActivePage, setSelectedServiceId, selectedServiceId, addCreatedSubscription } =
-        useOnboardingStore()
+    const {
+        createdSubscriptions,
+        setSelectedServiceId,
+        selectedServiceId,
+        addCreatedSubscription,
+        setCreatedSubscriptions,
+        selectedPrefabs,
+        setSelectedPrefabs,
+    } = useOnboardingStore()
+
+    const handleRemove = () => {
+        // check if the item being removed is a prefab
+        setSelectedPrefabs(selectedPrefabs.filter((p) => p !== selectedServiceId))
+
+        if (createdSubscriptions.length > 1) {
+            const updatedList = createdSubscriptions.filter((s) => s.id !== selectedServiceId)
+            setSelectedServiceId(updatedList[0].id)
+            setCreatedSubscriptions(updatedList)
+        } else {
+            const id = uuid()
+            setCreatedSubscriptions([
+                {
+                    id: id,
+                    currencyId: "",
+                    name: "",
+                    renewalAmount: 0,
+                    subscribedOn: new Date(),
+                    renewalPeriodEnum: "monthly",
+                    renewalPeriodDays: 1,
+                },
+            ])
+            setSelectedServiceId(id)
+        }
+    }
 
     return (
-        <Card className="box-border my-4">
-            <CardContent className="py-1 px-4 grid gap-3 grid-cols-[max-content_2px_1fr] items-center">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button size="icon" variant="ghost" className="rounded-full border-dashed border-2">
-                            <Plus />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="start">
-                        <DropdownMenuItem
-                            onSelect={() =>
-                                addCreatedSubscription({
-                                    id: uuid(),
-                                    name: "",
-                                    currencyId: "",
-                                    renewalAmount: 0,
-                                    subscribedOn: new Date(),
-                                    renewalPeriodEnum: "monthly",
-                                    renewalPeriodDays: 1,
-                                })
-                            }
-                        >
-                            Create New
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setActivePage(1)}>Pick from list</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <Separator orientation="vertical" />
-                <div className="flex overflow-auto gap-6 pt-1 pb-3">
+        <Card className="box-border w-[300px] bg-[#0F0F0F]">
+            <CardContent className="p-3 space-y-2">
+                <Button
+                    size="sm"
+                    variant="ghost"
+                    className="space-x-2 w-full justify-start"
+                    onClick={() =>
+                        addCreatedSubscription({
+                            id: uuid(),
+                            name: "",
+                            currencyId: "",
+                            renewalAmount: 0,
+                            subscribedOn: new Date(),
+                            renewalPeriodEnum: "monthly",
+                            renewalPeriodDays: 1,
+                        })
+                    }
+                >
+                    <PlusCircle className="stroke-1 w-5 h-5" /> <p>Add new</p>
+                </Button>
+                <Separator />
+                <div className="overflow-auto space-y-2">
                     {createdSubscriptions.map((service, idx) => {
                         return (
-                            <button
-                                disabled={selectedServiceId === service.id}
-                                className={cn(
-                                    "flex flex-col items-center gap-2 w-16 p-2 border rounded-md border-transparent",
-                                    selectedServiceId === service.id && "border-stone-800"
-                                )}
+                            <div
                                 key={service.name}
-                                onClick={() => setSelectedServiceId(service.id)}
+                                className="grid grid-cols-[minmax(60px,100%)_max-content] items-center gap-1"
                             >
-                                <Avatar>
-                                    {/* <AvatarImage src={service.logoUrl} alt={service.label} /> */}
-                                    <AvatarFallback>{service.name.replace(" ", "").slice(0, 2)}</AvatarFallback>
-                                </Avatar>
-                                <Label className="line-clamp-1 w-20 text-center">{service.name}</Label>
-                            </button>
+                                <Button
+                                    variant="ghost"
+                                    disabled={selectedServiceId === service.id}
+                                    className={cn(
+                                        "w-full justify-start overflow-clip",
+                                        selectedServiceId === service.id && "bg-stone-800"
+                                    )}
+                                    onClick={() => setSelectedServiceId(service.id)}
+                                >
+                                    {service.name || "Unnamed"}
+                                </Button>
+                                <Button variant="ghost" size="icon" className="shrink-0" onClick={handleRemove}>
+                                    <Trash2 size="20" className="stroke-destructive" />
+                                </Button>
+                            </div>
                         )
                     })}
                 </div>
