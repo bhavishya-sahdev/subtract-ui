@@ -1,6 +1,17 @@
-import { Button, Card, CardContent, Separator } from "@/components/ui"
+import {
+    Button,
+    Card,
+    CardContent,
+    Separator,
+    toast,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    useToast,
+} from "@/components/ui"
 import { cn } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/onboarding"
+import { TooltipTrigger } from "@radix-ui/react-tooltip"
 import { PlusCircle, Trash2 } from "lucide-react"
 import { v4 as uuid } from "uuid"
 
@@ -14,6 +25,7 @@ const AddNewTopBar = () => {
         selectedPrefabs,
         setSelectedPrefabs,
     } = useOnboardingStore()
+    const { toast } = useToast()
 
     const handleRemove = () => {
         // check if the item being removed is a prefab
@@ -38,6 +50,7 @@ const AddNewTopBar = () => {
             ])
             setSelectedServiceId(id)
         }
+        toast({ title: "Deleted subscription" })
     }
 
     return (
@@ -62,8 +75,8 @@ const AddNewTopBar = () => {
                     <PlusCircle className="stroke-1 w-5 h-5" /> <p>Add new</p>
                 </Button>
                 <Separator />
-                <div className="overflow-auto space-y-2">
-                    {createdSubscriptions.map((service, idx) => {
+                <div className="overflow-auto space-y-2 max-h-[200px]">
+                    {createdSubscriptions.map((service) => {
                         return (
                             <div
                                 key={service.name}
@@ -80,9 +93,23 @@ const AddNewTopBar = () => {
                                 >
                                     {service.name || "Unnamed"}
                                 </Button>
-                                <Button variant="ghost" size="icon" className="shrink-0" onClick={handleRemove}>
-                                    <Trash2 size="20" className="stroke-destructive" />
-                                </Button>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="shrink-0"
+                                                onClick={handleRemove}
+                                            >
+                                                <Trash2 size="20" className="stroke-destructive" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom" align="start">
+                                            <p>Delete subscription</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </div>
                         )
                     })}
