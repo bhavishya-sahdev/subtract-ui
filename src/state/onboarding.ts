@@ -1,13 +1,19 @@
-import { create } from "zustand"
 import { fetchAllCurrencies, fetchPrefabs } from "@/lib/serverUtils"
 import { TSetterFunction } from "@/lib/types"
 import { z } from "zod"
+import { useFieldArray } from "react-hook-form"
+import { createStore } from "zustand/vanilla"
+import { MutableRefObject } from "react"
 
-export const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"])
+export const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"], {
+    invalid_type_error: "Incorrect value",
+    required_error: "Required",
+    message: "Required",
+})
 
 export const SubscriptionFormSchema = z.object({
     name: z.string(),
-    subscribedOn: z.date().optional(),
+    subscribedOn: z.date(),
     currencyId: z.string(),
     renewalAmount: z.number().nonnegative(),
     renewalPeriodEnum: renewalPeriodEnum.default("monthly"),
@@ -15,7 +21,7 @@ export const SubscriptionFormSchema = z.object({
 })
 export type TSubscriptionFormSchema = z.infer<typeof SubscriptionFormSchema>
 
-export type TSubscription = TSubscriptionFormSchema & { id: string }
+export type TSubscription = TSubscriptionFormSchema & { uuid: string }
 
 export type TCurrency = {
     uuid: string
@@ -36,70 +42,45 @@ export const PrefabSchema = z.object({
 
 export type TPrefab = z.infer<typeof PrefabSchema>
 
-type TOnboardingStore = {
+export type TOnboardingState = {
     activePage: number
-    setActivePage: TSetterFunction<[number]>
-
-    createdSubscriptions: TSubscription[]
-    addCreatedSubscription: TSetterFunction<[TSubscription]>
-    removeCreatedSubscription: TSetterFunction<[string]>
-    updateCreatedSubscription: TSetterFunction<[string, Partial<TSubscription>]>
-    setCreatedSubscriptions: TSetterFunction<[TSubscription[]]>
-
     selectedPrefabs: string[]
-    setSelectedPrefabs: TSetterFunction<[string[]]>
-
     currencies: TCurrency[]
-    setCurrencies: TSetterFunction<[]>
-
     prefabs: TPrefab[]
-    setPrefabs: TSetterFunction<[]>
-
     selectedServiceId: string | null
+}
+
+export type TOnboardingActions = {
+    setSelectedPrefabs: TSetterFunction<[string[]]>
+    setCurrencies: TSetterFunction<[]>
+    setActivePage: TSetterFunction<[number]>
+    setPrefabs: TSetterFunction<[]>
     setSelectedServiceId: TSetterFunction<[string]>
 }
 
-export const useOnboardingStore = create<TOnboardingStore>((set, get) => ({
-    activePage: 0,
-    setActivePage: (newActivePage) => set({ activePage: newActivePage }),
+export type TOnboardingStore = TOnboardingState & TOnboardingActions
 
-    createdSubscriptions: [],
-    addCreatedSubscription: (value) => {
-        const updatedSubscriptions = get().createdSubscriptions
-        updatedSubscriptions.push(value)
-        set({ createdSubscriptions: updatedSubscriptions })
-    },
-    removeCreatedSubscription: (value) => {
-        const subscriptions = get().createdSubscriptions
-        const updatedSubscriptions = subscriptions.filter((service) => service.id !== value)
-        set({ createdSubscriptions: updatedSubscriptions })
-    },
-    setCreatedSubscriptions: (values) => set({ createdSubscriptions: values }),
-    updateCreatedSubscription: (id, object) => {
-        const updatedSubscriptions = get().createdSubscriptions.map((ob) => {
-            if (ob.id === id) {
-                return { ...ob, ...object }
-            }
-            return ob
-        })
-        set({ createdSubscriptions: updatedSubscriptions })
-    },
+export const createOnboardingStore = () => {
+    return createStore<TOnboardingStore>((set) => ({
+        activePage: 0,
+        setActivePage: (newActivePage) => set({ activePage: newActivePage }),
 
-    selectedPrefabs: [],
-    setSelectedPrefabs: (values) => set({ selectedPrefabs: values }),
+        selectedPrefabs: [],
+        setSelectedPrefabs: (values) => set({ selectedPrefabs: values }),
 
-    currencies: [],
-    setCurrencies: async () => {
-        const res = await fetchAllCurrencies()
-        if (res.data) set({ currencies: res.data })
-    },
+        currencies: [],
+        setCurrencies: async () => {
+            const res = await fetchAllCurrencies()
+            if (res.data) set({ currencies: res.data })
+        },
 
-    prefabs: [],
-    setPrefabs: async () => {
-        const res = await fetchPrefabs()
-        if (res.data) set({ prefabs: res.data })
-    },
+        prefabs: [],
+        setPrefabs: async () => {
+            const res = await fetchPrefabs()
+            if (res.data) set({ prefabs: res.data })
+        },
 
-    selectedServiceId: null,
-    setSelectedServiceId: (value) => set({ selectedServiceId: value }),
-}))
+        selectedServiceId: null,
+        setSelectedServiceId: (value) => set({ selectedServiceId: value }),
+    }))
+}

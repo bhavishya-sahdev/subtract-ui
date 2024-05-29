@@ -1,19 +1,27 @@
 "use client"
-import AddDetails from "@/components/custom/onboarding/pages/AddDetails.3"
-import GetStarted from "@/components/custom/onboarding/pages/GetStarted.1"
-import PickSubscriptions from "@/components/custom/onboarding/pages/PickSubscriptions.2"
-import { useOnboardingStore } from "@/state/onboarding"
-import { useEffect } from "react"
 
-const pages = [<GetStarted key="page1" />, <PickSubscriptions key="page2" />, <AddDetails key="page3" />]
+import Parent from "@/components/custom/onboarding/pages/Parent"
+import { OnboardingStoreProvider } from "@/state/context/OnboardingContext"
+import { SubscriptionFormSchema, TSubscription } from "@/state/onboarding"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { FormProvider, useFieldArray, useForm } from "react-hook-form"
 
 export default function Onboard() {
-    const { activePage, setCurrencies, setPrefabs } = useOnboardingStore()
+    const { watch, ...form } = useForm<{ subscriptions: TSubscription[] }>({
+        resolver: zodResolver(SubscriptionFormSchema.array()),
+        mode: "onBlur",
+    })
 
-    useEffect(() => {
-        setCurrencies()
-        setPrefabs()
-    }, [])
+    const fieldArray = useFieldArray({
+        control: form.control,
+        name: "subscriptions",
+    })
 
-    return <div className="gap-4 h-full p-10">{pages[activePage]}</div>
+    return (
+        <FormProvider watch={watch} {...form}>
+            <OnboardingStoreProvider>
+                <Parent fieldArray={fieldArray} />
+            </OnboardingStoreProvider>
+        </FormProvider>
+    )
 }
