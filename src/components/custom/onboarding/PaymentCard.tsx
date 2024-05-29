@@ -1,11 +1,11 @@
 import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
 import { CircleAlert, CircleCheck, Info, SquarePen, Trash2 } from "lucide-react"
 import { useMemo } from "react"
-export type TPaymentProps = {
+export type TPaymentCardProps = {
     variant?: "paid" | "pending" | "upcoming"
 }
 
-export default function Payment({ variant = "paid" }: TPaymentProps) {
+export default function PaymentCard({ variant = "paid" }: TPaymentCardProps) {
     const renderVariantText = useMemo(() => {
         if (variant === "paid") {
             return (
