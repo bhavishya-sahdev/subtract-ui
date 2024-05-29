@@ -1,32 +1,19 @@
 import { Button, Card, CardContent, Label, ToggleGroup, ToggleGroupItem } from "@/components/ui"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useOnboardingStore } from "@/state/onboarding"
+import { initiateNewSubscription } from "@/lib/utils"
+import { useOnboardingStore } from "@/state/context/OnboardingContext"
+import { TSubscription } from "@/state/onboarding"
 import { xor, intersection, union } from "lodash"
-import { v4 as uuid } from "uuid"
+import { useFieldArray } from "react-hook-form"
 
-export default function PickSubscriptions() {
-    const {
-        setActivePage,
-        createdSubscriptions,
-        addCreatedSubscription,
-        removeCreatedSubscription,
-        prefabs,
-        selectedPrefabs,
-        setSelectedPrefabs,
-        setSelectedServiceId,
-    } = useOnboardingStore()
+export type TPickSubscriptionsProps = {
+    fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
+}
 
-    const initiateNewSubscription = (id: string, name: string) => {
-        addCreatedSubscription({
-            id,
-            name,
-            currencyId: "",
-            renewalAmount: 0,
-            subscribedOn: new Date(),
-            renewalPeriodEnum: "monthly",
-            renewalPeriodDays: 1,
-        })
-    }
+export default function PickSubscriptions({ fieldArray: { fields, remove, prepend } }: TPickSubscriptionsProps) {
+    const { setActivePage, setSelectedServiceId, prefabs, selectedPrefabs, setSelectedPrefabs } = useOnboardingStore(
+        (state) => state
+    )
 
     const handleToggleSelection = (v: string[]) => {
         let updated: string[] = []
@@ -35,10 +22,12 @@ export default function PickSubscriptions() {
 
         if (v.length > selectedPrefabs.length) {
             updated = union(v, selectedPrefabs)
-            initiateNewSubscription(selectedPrefab.id, selectedPrefab.name)
+            prepend(initiateNewSubscription({ uuid: selectedPrefab.id, name: selectedPrefab.name }))
+            setSelectedServiceId(selectedPrefab.id)
         } else {
             updated = intersection(v, selectedPrefabs)
-            removeCreatedSubscription(selectedPrefab.id)
+            const getIndex = fields.findIndex((item) => item.id === diff)
+            remove(getIndex)
         }
         setSelectedPrefabs(updated)
     }
@@ -46,22 +35,7 @@ export default function PickSubscriptions() {
     const handleSubmit = () => {
         // default the selected subscription to either a newly created empty object's id
         // the first selected service's id
-        if (createdSubscriptions.length == 0) {
-            const id = uuid()
-            addCreatedSubscription({
-                id: id,
-                currencyId: "",
-                name: "",
-                renewalAmount: 0,
-                subscribedOn: new Date(),
-                renewalPeriodEnum: "monthly",
-                renewalPeriodDays: 1,
-            })
-            setSelectedServiceId(id)
-        } else {
-            setSelectedServiceId(createdSubscriptions[0].id)
-        }
-
+        if (fields.length === 0) prepend(initiateNewSubscription())
         setActivePage(2)
     }
 
