@@ -6,7 +6,7 @@ export type TUserState = {
 }
 
 export type TUserActions = {
-    setUser: TSetterFunction<[TAxiosUserDetails]>
+    setUser: TSetterFunction<[TUserState["user"]]>
 }
 
 export type TUserStore = TUserActions & TUserState
