@@ -15,5 +15,5 @@ export default function Onboard() {
         setPrefabs()
     }, [])
 
-    return <div className="mx-auto gap-4 max-w-md h-full">{pages[activePage]}</div>
+    return <div className="gap-4 h-full p-10">{pages[activePage]}</div>
 }
