@@ -8,16 +8,17 @@ import { useEffect } from "react"
 import { useFieldArray } from "react-hook-form"
 import { TSubscription } from "@/state/onboarding"
 
-export type TParentProps = {
-    fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
-}
-
-export default function Parent({ fieldArray }: TParentProps) {
+export default function Parent() {
     const { activePage, setCurrencies, setPrefabs } = useOnboardingStore((state) => state)
+
+    const fieldArray = useFieldArray<{ subscriptions: TSubscription[] }>({
+        name: "subscriptions",
+    })
 
     useEffect(() => {
         setCurrencies()
         setPrefabs()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const pages = [
