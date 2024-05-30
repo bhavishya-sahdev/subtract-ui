@@ -54,9 +54,10 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
     )
 
     if (selectedServiceId === null) return
+    if (!active) return
 
     return (
-        <div className={cn(active ? "block" : "hidden")}>
+        <div>
             <div className="space-y-4">
                 {/* name */}
                 <FormField
