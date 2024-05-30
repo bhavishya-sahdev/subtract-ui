@@ -22,8 +22,8 @@ import {
 } from "@/components/ui"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { useCallback } from "react"
+import { cn, generatePayments, PaymentObject } from "@/lib/utils"
+import { useCallback, useEffect, useState } from "react"
 import { renewalPeriodEnum, TSubscription } from "@/state/onboarding"
 import { useFormContext } from "react-hook-form"
 import { z } from "zod"
@@ -41,9 +41,13 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
 
     const { watch, ...form } = useFormContext<{ subscriptions: TSubscription[] }>()
 
+    const [payments, setPayments] = useState<PaymentObject[]>([])
+
     const watchRenewalPeriodEnum = watch(`subscriptions.${index}.renewalPeriodEnum`)
     const watchRenewalPeriodDays = watch(`subscriptions.${index}.renewalPeriodDays`)
     const watchCreationDate = watch(`subscriptions.${index}.creationDate`)
+    const watchCurrencyId = watch(`subscriptions.${index}.currencyId`)
+    const watchRenewalAmount = watch(`subscriptions.${index}.renewalAmount`)
 
     const renderCurrencyText = useCallback(
         (value: string) => {
@@ -55,6 +59,19 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
         },
         [currencies]
     )
+
+    useEffect(() => {
+        if (watchCreationDate && watchRenewalPeriodEnum) {
+            const newPayments = generatePayments(
+                watchCreationDate,
+                watchRenewalPeriodEnum,
+                watchRenewalPeriodDays,
+                watchRenewalAmount,
+                watchCurrencyId
+            )
+            setPayments(newPayments)
+        }
+    }, [watchRenewalPeriodDays, watchRenewalPeriodEnum, watchCreationDate, watchRenewalAmount, watchCurrencyId])
 
     if (selectedServiceId === null) return
     if (!active) return
@@ -266,14 +283,8 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                     <FormDescription>How long is the billing cycle?</FormDescription>
                 </div>
             </div>
-            <div className="my-4 space-y-1">
-                <Payments
-                    {...{
-                        creationDate: watchCreationDate,
-                        renewalPeriodDays: watchRenewalPeriodDays,
-                        renewalPeriodEnum: watchRenewalPeriodEnum,
-                    }}
-                />
+            <div className="my-4 space-y-2">
+                <Payments payments={payments} />
             </div>
         </div>
     )
