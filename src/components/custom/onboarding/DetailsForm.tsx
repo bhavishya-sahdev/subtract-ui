@@ -4,6 +4,7 @@ import {
     Button,
     Calendar,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -112,7 +113,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                                         />
                                     </PopoverContent>
                                 </Popover>
-
+                                {/* <FormDescription>Your next payment is on {getNextPaymentDate()}</FormDescription> */}
                                 <FormMessage />
                             </div>
                         </FormItem>
@@ -148,6 +149,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                                             ))}
                                         </SelectContent>
                                     </Select>
+
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -167,10 +169,13 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                                             {...field}
                                         />
                                     </FormControl>
+
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </div>
+                    <FormDescription>How much do you pay per billing cycle?</FormDescription>
                 </div>
                 {/* add day counter for renewal period, show next renewal on `date` */}
 
@@ -258,6 +263,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                             />
                         )}
                     </div>
+                    <FormDescription>How long is the billing cycle?</FormDescription>
                 </div>
             </div>
             <div className="my-4 space-y-1">
