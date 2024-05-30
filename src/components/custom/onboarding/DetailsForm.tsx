@@ -133,11 +133,13 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                                             field.onChange(v)
                                         }}
                                     >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a currency">
-                                                {renderCurrencyText(field.value)}
-                                            </SelectValue>
-                                        </SelectTrigger>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a currency">
+                                                    {renderCurrencyText(field.value!)}
+                                                </SelectValue>
+                                            </SelectTrigger>
+                                        </FormControl>
                                         <SelectContent>
                                             {currencies.map((currency) => (
                                                 <SelectItem value={currency.code} key={currency.code}>
@@ -180,24 +182,25 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                             name={`subscriptions.${index}.renewalPeriodEnum`}
                             render={({ field }) => (
                                 <FormItem className="w-[280px]">
-                                    <FormControl>
-                                        <Select
-                                            value={field.value}
-                                            onValueChange={(v: z.infer<typeof renewalPeriodEnum>) => {
-                                                field.onChange(v)
-                                            }}
-                                        >
+                                    <Select
+                                        value={field.value}
+                                        onValueChange={(v: z.infer<typeof renewalPeriodEnum>) => {
+                                            field.onChange(v)
+                                        }}
+                                    >
+                                        <FormControl>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select renewal period" />
                                             </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="annually">Annually</SelectItem>
-                                                <SelectItem value="monthly">Monthly</SelectItem>
-                                                <SelectItem value="weekly">Weekly</SelectItem>
-                                                <SelectItem value="custom">Custom (weeks)</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
+                                        </FormControl>
+
+                                        <SelectContent>
+                                            <SelectItem value="annually">Annually</SelectItem>
+                                            <SelectItem value="monthly">Monthly</SelectItem>
+                                            <SelectItem value="weekly">Weekly</SelectItem>
+                                            <SelectItem value="custom">Custom (weeks)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
 
                                     <FormMessage />
                                 </FormItem>
