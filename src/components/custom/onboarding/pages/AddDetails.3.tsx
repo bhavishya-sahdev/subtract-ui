@@ -10,6 +10,8 @@ import AddNewTopBar from "../AddNewTopBar"
 import DetailsForm from "../DetailsForm"
 import { initiateNewSubscription } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
+import { client } from "@/lib/axiosClient"
+import api from "@/lib/api"
 
 export type TAddDetailsProps = {
     fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
@@ -20,20 +22,22 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { toast } = useToast()
     const { fields, append } = fieldArray
 
-    const { watch, handleSubmit, ...form } = useFormContext<{ subscriptions: TSubscription[] }>()
+    const { watch, ...form } = useFormContext<{ subscriptions: TSubscription[] }>()
 
     const [inProgress, setInProgress] = useState(false)
 
     async function onSubmit(data: { subscriptions: TSubscription[] }) {
-        console.log("ran")
         try {
             setInProgress(true)
+            const res = await client.post(api.subscription.create, data.subscriptions)
+            console.log(res.data)
         } catch (e: any) {
             toast({
                 variant: "destructive",
                 title: "An unknown error occured.",
                 description: "Please try again in a bit!",
             })
+            console.log(e)
         }
         setInProgress(false)
     }
@@ -61,18 +65,14 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                     <p className="text-2xl">Add details</p>
                     <p className="pb-4 text-muted-foreground">This is where the magic happens.</p>
 
-                    <Form watch={watch} handleSubmit={handleSubmit} {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            {fields.map((item, idx) => {
-                                return (
-                                    <DetailsForm key={item.id} active={item.uuid === selectedServiceId} index={idx} />
-                                )
-                            })}
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        {fields.map((item, idx) => {
+                            return <DetailsForm key={item.id} active={item.uuid === selectedServiceId} index={idx} />
+                        })}
 
-                            {/* show auto generated previous payments */}
-                            <Button className="mt-4">Add or Next or Finish</Button>
-                        </form>
-                    </Form>
+                        {/* show auto generated previous payments */}
+                        <Button className="mt-4">Add or Next or Finish</Button>
+                    </form>
                 </div>
             </div>
         </div>
