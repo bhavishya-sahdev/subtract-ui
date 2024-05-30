@@ -14,7 +14,10 @@ const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBar
     const { setSelectedServiceId, selectedServiceId, selectedPrefabs, setSelectedPrefabs } = useOnboardingStore(
         (state) => state
     )
-    const { watch } = useFormContext<{ subscriptions: TSubscription[] }>()
+    const {
+        watch,
+        formState: { errors },
+    } = useFormContext<{ subscriptions: TSubscription[] }>()
     const fieldValues = watch("subscriptions")
     const removeItem = (idx: number, id: string) => {
         const lengthBeforeDeletion = fields.length
@@ -55,7 +58,8 @@ const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBar
                                     disabled={selectedServiceId === service.uuid}
                                     className={cn(
                                         "w-full justify-start overflow-clip",
-                                        selectedServiceId === service.uuid && "bg-stone-800"
+                                        selectedServiceId === service.uuid && "bg-stone-800",
+                                        Object.keys(errors?.subscriptions?.[idx] || {}).length > 0 && "text-destructive"
                                     )}
                                     onClick={() => setSelectedServiceId(service.uuid)}
                                 >
