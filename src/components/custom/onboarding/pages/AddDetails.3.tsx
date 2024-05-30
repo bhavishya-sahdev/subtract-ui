@@ -30,14 +30,12 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
         try {
             setInProgress(true)
             const res = await client.post(api.subscription.create, data.subscriptions)
-            console.log(res.data)
         } catch (e: any) {
             toast({
                 variant: "destructive",
                 title: "An unknown error occured.",
                 description: "Please try again in a bit!",
             })
-            console.log(e)
         }
         setInProgress(false)
     }
