@@ -47,12 +47,12 @@ export default function PaymentCard({ date, amount, currencyId, status = "paid" 
     return (
         <div className="flex rounded border w-max bg-zinc-900">
             <div className="p-3 w-[200px] bg-background rounded-[3px]">
-                {amount && currencyId && (
+                {amount !== undefined && currencyId && currencyId !== "" ? (
                     <p>
                         {renderCurrencySymbol(currencyId)}
                         {amount}
                     </p>
-                )}
+                ) : null}
                 <p className="text-sm text-muted-foreground mb-3">{format(date, "PPP")}</p>
                 <div className="flex gap-1 items-center">{renderVariantText}</div>
             </div>
