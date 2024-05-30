@@ -8,13 +8,9 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form"
 
 export default function Onboard() {
     const { watch, ...form } = useForm<{ subscriptions: TSubscription[] }>({
-        resolver: zodResolver(SubscriptionFormSchema.array()),
+        resolver: zodResolver(z.object({ subscriptions: SubscriptionFormSchema.array() })),
         mode: "onBlur",
-    })
-
-    const fieldArray = useFieldArray({
-        control: form.control,
-        name: "subscriptions",
+        shouldUnregister: false,
     })
 
     return (
