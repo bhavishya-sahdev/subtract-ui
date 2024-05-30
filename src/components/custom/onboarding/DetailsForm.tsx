@@ -79,7 +79,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                 {/* subscribed on */}
                 <FormField
                     control={form.control}
-                    name={`subscriptions.${index}.subscribedOn`}
+                    name={`subscriptions.${index}.creationDate`}
                     render={({ field }) => (
                         <FormItem>
                             <div className="grid w-full max-w-sm items-center gap-1.5">
