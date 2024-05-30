@@ -29,6 +29,7 @@ import { z } from "zod"
 import { Minus, Plus } from "lucide-react"
 import PaymentCard from "./PaymentCard"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
+import Payments from "./Payments"
 
 export type TDetailsFormProps = {
     active: boolean
@@ -257,12 +258,13 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                 </div>
             </div>
             <div className="my-4 space-y-1">
-                <p>Payments</p>
-                <div className="flex gap-4 overflow-auto pr-10">
-                    <PaymentCard variant="upcoming" /> <PaymentCard variant="pending" /> <PaymentCard />
-                    <PaymentCard />
-                    <PaymentCard />
-                </div>
+                <Payments
+                    {...{
+                        creationDate: watchCreationDate,
+                        renewalPeriodDays: watchRenewalPeriodDays,
+                        renewalPeriodEnum: watchRenewalPeriodEnum,
+                    }}
+                />
             </div>
         </div>
     )
