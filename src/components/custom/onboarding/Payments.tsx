@@ -1,23 +1,16 @@
-import { TRenewalPeriodEnum } from "@/state/onboarding"
 import PaymentCard from "./PaymentCard"
+import { PaymentObject } from "@/lib/utils"
 
-export type TPaymentProps = {
-    renewalPeriodDays: number | undefined
-    renewalPeriodEnum: TRenewalPeriodEnum
-    creationDate: Date
-}
-
-export default function Payments({ ...props }: TPaymentProps) {
-    const renderCards = () => {}
-
+export default function Payments({ payments }: { payments: PaymentObject[] }) {
     return (
         <>
             <p>Payments</p>
-            <div className="flex gap-4 overflow-auto pr-10">
-                <PaymentCard variant="upcoming" /> <PaymentCard variant="pending" /> <PaymentCard />
-                <PaymentCard />
-                <PaymentCard />
+            <div className="flex gap-4 overflow-auto pr-10 scrollbar-hide">
+                {payments.map((payment, idx) => (
+                    <PaymentCard key={idx} {...payment} />
+                ))}
             </div>
+            <p className="text-sm text-muted-foreground">You can modify your payments later on</p>
         </>
     )
 }

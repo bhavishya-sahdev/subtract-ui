@@ -1,20 +1,33 @@
 import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
+import { PaymentObject, PaymentStatus } from "@/lib/utils"
+import { useOnboardingStore } from "@/state/context/OnboardingContext"
+import { format } from "date-fns"
 import { CircleAlert, CircleCheck, Info, SquarePen, Trash2 } from "lucide-react"
-import { useMemo } from "react"
-export type TPaymentCardProps = {
-    variant?: "paid" | "pending" | "upcoming"
-}
+import { useCallback, useMemo } from "react"
 
-export default function PaymentCard({ variant = "paid" }: TPaymentCardProps) {
+export default function PaymentCard({ date, amount, currencyId, status = "paid" }: PaymentObject) {
+    const currencies = useOnboardingStore((state) => state.currencies)
+
+    const renderCurrencySymbol = useCallback(
+        (value: string) => {
+            const c = currencies.find((c) => c.uuid === value)
+            if (!c) return ""
+
+            if (c.code === c.symbol) return c.code
+            return c.symbol
+        },
+        [currencies]
+    )
+
     const renderVariantText = useMemo(() => {
-        if (variant === "paid") {
+        if (status === "paid") {
             return (
                 <>
                     <CircleCheck size="16" className="stroke-green-600" />
                     <p className="text-sm text-green-600">Paid</p>
                 </>
             )
-        } else if (variant === "pending") {
+        } else if (status === "pending") {
             return (
                 <>
                     <CircleAlert size="16" className="stroke-red-600" />
@@ -29,21 +42,26 @@ export default function PaymentCard({ variant = "paid" }: TPaymentCardProps) {
                 </>
             )
         }
-    }, [variant])
+    }, [status])
 
     return (
         <div className="flex rounded border w-max bg-zinc-900">
             <div className="p-3 w-[200px] bg-background rounded-[3px]">
-                <p>$129.99</p>
-                <p className="text-sm text-muted-foreground mb-3">January 12, 2024</p>
+                {amount && currencyId && (
+                    <p>
+                        {renderCurrencySymbol(currencyId)}
+                        {amount}
+                    </p>
+                )}
+                <p className="text-sm text-muted-foreground mb-3">{format(date, "PPP")}</p>
                 <div className="flex gap-1 items-center">{renderVariantText}</div>
             </div>
 
-            <div className="flex flex-col p-1 gap-1">
+            {/* <div className="flex flex-col p-1 gap-1">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="w-max h-max p-1.5">
+                            <Button status="ghost" size="icon" className="w-max h-max p-1.5">
                                 <SquarePen size="16" className="stroke-muted-foreground" />
                             </Button>
                         </TooltipTrigger>
@@ -55,7 +73,7 @@ export default function PaymentCard({ variant = "paid" }: TPaymentCardProps) {
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="w-max h-max p-1.5">
+                            <Button status="ghost" size="icon" className="w-max h-max p-1.5">
                                 <Trash2 size="16" className="stroke-destructive" />
                             </Button>
                         </TooltipTrigger>
@@ -64,7 +82,7 @@ export default function PaymentCard({ variant = "paid" }: TPaymentCardProps) {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-            </div>
+            </div> */}
         </div>
     )
 }
