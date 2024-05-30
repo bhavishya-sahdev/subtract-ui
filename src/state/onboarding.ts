@@ -1,9 +1,8 @@
 import { fetchAllCurrencies, fetchPrefabs } from "@/lib/serverUtils"
 import { TSetterFunction } from "@/lib/types"
+import { add } from "date-fns"
 import { z } from "zod"
-import { useFieldArray } from "react-hook-form"
 import { createStore } from "zustand/vanilla"
-import { MutableRefObject } from "react"
 
 export const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custom"], {
     invalid_type_error: "Incorrect value",
@@ -11,17 +10,25 @@ export const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custo
     message: "Required",
 })
 
-export const SubscriptionFormSchema = z.object({
-    name: z.string(),
-    subscribedOn: z.date(),
-    currencyId: z.string(),
-    renewalAmount: z.number().nonnegative(),
-    renewalPeriodEnum: renewalPeriodEnum.default("monthly"),
-    renewalPeriodDays: z.number().gt(1).default(1).optional(),
-})
-export type TSubscriptionFormSchema = z.infer<typeof SubscriptionFormSchema>
+export type TRenewalPeriodEnum = z.infer<typeof renewalPeriodEnum>
 
-export type TSubscription = TSubscriptionFormSchema & { uuid: string }
+export const SubscriptionFormSchema = z.object({
+    name: z.string().min(3),
+    creationDate: z.date(),
+    currencyId: z.string().uuid("Please select a currency").optional(),
+    renewalAmount: z.preprocess(
+        (val) => (val === "" ? undefined : val),
+        z.coerce.number({ message: "Required" }).nonnegative()
+    ),
+    renewalPeriodEnum: renewalPeriodEnum,
+    renewalPeriodDays: z.coerce.number().gte(1).optional(),
+    paymentCount: z.number().nonnegative(),
+    totalCost: z.number().nonnegative(),
+    uuid: z.string().uuid(),
+    upcomingPaymentDate: z.date().min(add(new Date(), { days: 1 })),
+})
+
+export type TSubscription = z.infer<typeof SubscriptionFormSchema>
 
 export type TCurrency = {
     uuid: string
