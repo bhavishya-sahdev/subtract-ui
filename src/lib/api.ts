@@ -7,6 +7,9 @@ const api = {
         getDetails: "/user",
         getSubscriptions: "/user/subscriptions",
     },
+    subscription: {
+        create: "/subscription",
+    },
     utils: {
         currency: "/currency",
         prefab: "/prefab",
