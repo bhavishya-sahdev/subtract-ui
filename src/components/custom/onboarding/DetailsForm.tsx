@@ -28,7 +28,6 @@ import { renewalPeriodEnum, TSubscription } from "@/state/onboarding"
 import { useFormContext } from "react-hook-form"
 import { z } from "zod"
 import { Minus, Plus } from "lucide-react"
-import PaymentCard from "./PaymentCard"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import Payments from "./Payments"
 
@@ -43,10 +42,12 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
     const { watch, ...form } = useFormContext<{ subscriptions: TSubscription[] }>()
 
     const watchRenewalPeriodEnum = watch(`subscriptions.${index}.renewalPeriodEnum`)
+    const watchRenewalPeriodDays = watch(`subscriptions.${index}.renewalPeriodDays`)
+    const watchCreationDate = watch(`subscriptions.${index}.creationDate`)
 
     const renderCurrencyText = useCallback(
         (value: string) => {
-            const c = currencies.find((c) => c.code === value)
+            const c = currencies.find((c) => c.uuid === value)
             if (!c) return ""
 
             if (c.code === c.symbol) return c.code
@@ -71,7 +72,6 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                             <FormControl>
                                 <Input id="service_name" type="text" placeholder="Netflix" {...field} />
                             </FormControl>
-
                             <FormMessage />
                         </FormItem>
                     )}
@@ -143,7 +143,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                                         </FormControl>
                                         <SelectContent>
                                             {currencies.map((currency) => (
-                                                <SelectItem value={currency.code} key={currency.code}>
+                                                <SelectItem value={currency.uuid} key={currency.code}>
                                                     {currency.name} ({currency.symbol})
                                                 </SelectItem>
                                             ))}
