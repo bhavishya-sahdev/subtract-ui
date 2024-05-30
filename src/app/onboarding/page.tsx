@@ -1,10 +1,12 @@
 "use client"
 
 import Parent from "@/components/custom/onboarding/pages/Parent"
+import { Form } from "@/components/ui"
 import { OnboardingStoreProvider } from "@/state/context/OnboardingContext"
 import { SubscriptionFormSchema, TSubscription } from "@/state/onboarding"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { FormProvider, useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 export default function Onboard() {
     const { watch, ...form } = useForm<{ subscriptions: TSubscription[] }>({
@@ -14,10 +16,10 @@ export default function Onboard() {
     })
 
     return (
-        <FormProvider watch={watch} {...form}>
+        <Form watch={watch} {...form}>
             <OnboardingStoreProvider>
-                <Parent fieldArray={fieldArray} />
+                <Parent />
             </OnboardingStoreProvider>
-        </FormProvider>
+        </Form>
     )
 }
