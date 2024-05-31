@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Separator, Tooltip, TooltipContent, TooltipProvider } from "@/components/ui"
 import { cn, initiateNewSubscription } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
-import { TSubscription } from "@/state/onboarding"
+import { TOnboardingForm, TSubscription } from "@/state/onboarding"
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
 import { PlusCircle, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
@@ -17,7 +17,7 @@ const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBar
     const {
         watch,
         formState: { errors },
-    } = useFormContext<{ subscriptions: TSubscription[] }>()
+    } = useFormContext<TOnboardingForm>()
     const fieldValues = watch("subscriptions")
     const removeItem = (idx: number, id: string) => {
         const lengthBeforeDeletion = fields.length
