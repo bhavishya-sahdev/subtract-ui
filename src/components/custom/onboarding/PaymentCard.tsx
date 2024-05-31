@@ -1,11 +1,11 @@
 import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
-import { PaymentObject, PaymentStatus } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
+import { TPayment } from "@/state/onboarding"
 import { format } from "date-fns"
 import { CircleAlert, CircleCheck, Info, SquarePen, Trash2 } from "lucide-react"
 import { useCallback, useMemo } from "react"
 
-export default function PaymentCard({ date, amount, currencyId, status = "paid" }: PaymentObject) {
+export default function PaymentCard({ date, amount, currencyId, status = "paid" }: TPayment) {
     const currencies = useOnboardingStore((state) => state.currencies)
 
     const renderCurrencySymbol = useCallback(
