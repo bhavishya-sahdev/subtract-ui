@@ -1,4 +1,5 @@
-import { TSubscription } from "@/state/onboarding"
+import { useOnboardingStore } from "@/state/context/OnboardingContext"
+import { TPayment, TSubscription } from "@/state/onboarding"
 import { type ClassValue, clsx } from "clsx"
 import { add, addDays, addMonths, addYears } from "date-fns"
 import { twMerge } from "tailwind-merge"
@@ -8,23 +9,20 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export type PaymentStatus = "paid" | "pending" | "upcoming"
-
-export interface PaymentObject {
-    date: Date
-    status: PaymentStatus
+export function generatePayments({
+    creationDate,
+    renewalPeriodEnum,
+    amount,
+    currencyId,
+    renewalPeriodDays,
+}: {
+    creationDate: Date
+    renewalPeriodEnum: "annually" | "monthly" | "weekly" | "custom"
+    renewalPeriodDays?: number
     amount?: number
     currencyId?: string
-}
-
-export function generatePayments(
-    creationDate: Date,
-    renewalPeriodEnum: "annually" | "monthly" | "weekly" | "custom",
-    renewalPeriodDays?: number,
-    amount?: number,
-    currencyId?: string
-): PaymentObject[] {
-    const payments: PaymentObject[] = []
+}): TPayment[] {
+    const payments: TPayment[] = []
     let nextPaymentDate = new Date(creationDate)
 
     const handleCustomPeriod = (daysToAdd: number = 7) => {
