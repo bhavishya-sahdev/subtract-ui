@@ -10,7 +10,7 @@ export type TPickSubscriptionsProps = {
     fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
 }
 
-export default function PickSubscriptions({ fieldArray: { fields, remove, prepend } }: TPickSubscriptionsProps) {
+export default function PickSubscriptions({ fieldArray: { fields, remove, append } }: TPickSubscriptionsProps) {
     const { setActivePage, setSelectedServiceId, prefabs, selectedPrefabs, setSelectedPrefabs } = useOnboardingStore(
         (state) => state
     )
@@ -22,7 +22,7 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, prepen
 
         if (v.length > selectedPrefabs.length) {
             updated = union(v, selectedPrefabs)
-            prepend(initiateNewSubscription({ uuid: selectedPrefab.id, name: selectedPrefab.name }))
+            append(initiateNewSubscription({ uuid: selectedPrefab.id, name: selectedPrefab.name }))
             setSelectedServiceId(selectedPrefab.id)
         } else {
             updated = intersection(v, selectedPrefabs)
@@ -35,7 +35,7 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, prepen
     const handleSubmit = () => {
         // default the selected subscription to either a newly created empty object's id
         // the first selected service's id
-        if (fields.length === 0) prepend(initiateNewSubscription())
+        if (fields.length === 0) append(initiateNewSubscription())
         setActivePage(2)
     }
 
