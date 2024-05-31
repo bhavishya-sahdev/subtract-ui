@@ -12,6 +12,21 @@ export const renewalPeriodEnum = z.enum(["annually", "monthly", "weekly", "custo
 
 export type TRenewalPeriodEnum = z.infer<typeof renewalPeriodEnum>
 
+export const PaymentStatus = z.enum(["paid", "pending", "upcoming"], {
+    invalid_type_error: "Incorrect value",
+    required_error: "Required",
+    message: "Required",
+})
+export type TPaymentStatus = z.infer<typeof PaymentStatus>
+
+export const PaymentSchema = z.object({
+    date: z.date(),
+    status: PaymentStatus,
+    amount: z.coerce.number().optional(),
+    currencyId: z.string().uuid("Please select a currency").optional(),
+})
+export type TPayment = z.infer<typeof PaymentSchema>
+
 export const SubscriptionFormSchema = z.object({
     name: z.string().min(3),
     creationDate: z.date(),
@@ -29,6 +44,10 @@ export const SubscriptionFormSchema = z.object({
 })
 
 export type TSubscription = z.infer<typeof SubscriptionFormSchema>
+
+export type TOnboardingForm = {
+    subscriptions: TSubscription[]
+}
 
 export type TCurrency = {
     uuid: string
