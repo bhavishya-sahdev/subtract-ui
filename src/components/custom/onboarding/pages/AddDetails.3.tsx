@@ -2,7 +2,7 @@
 
 import { Button, Form, useToast } from "@/components/ui"
 import { useEffect, useState } from "react"
-import { TSubscription } from "@/state/onboarding"
+import { TOnboardingForm } from "@/state/onboarding"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
 import { ArrowLeft } from "lucide-react"
@@ -14,7 +14,7 @@ import { client } from "@/lib/axiosClient"
 import api from "@/lib/api"
 
 export type TAddDetailsProps = {
-    fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
+    fieldArray: ReturnType<typeof useFieldArray<TOnboardingForm>>
 }
 
 export default function AddDetails({ fieldArray }: TAddDetailsProps) {
@@ -22,14 +22,15 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { toast } = useToast()
     const { fields, append } = fieldArray
 
-    const { watch, ...form } = useFormContext<{ subscriptions: TSubscription[] }>()
+    const { handleSubmit } = useFormContext<TOnboardingForm>()
 
     const [inProgress, setInProgress] = useState(false)
 
-    async function onSubmit(data: { subscriptions: TSubscription[] }) {
+    async function onSubmit(data: TOnboardingForm) {
         try {
             setInProgress(true)
             const res = await client.post(api.subscription.create, data.subscriptions)
+            if (res.data !== null) toast({ title: "Subscriptions created successfully" })
         } catch (e: any) {
             toast({
                 variant: "destructive",
@@ -40,6 +41,7 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
         setInProgress(false)
     }
 
+    // if no subscriptions
     useEffect(() => {
         if (fields.length === 0) {
             append(initiateNewSubscription())
@@ -63,7 +65,7 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                     <p className="text-2xl">Add details</p>
                     <p className="pb-4 text-muted-foreground">This is where the magic happens.</p>
 
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
                         {fields.map((item, idx) => {
                             return <DetailsForm key={item.id} active={item.uuid === selectedServiceId} index={idx} />
                         })}
