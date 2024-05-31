@@ -1,7 +1,12 @@
+import { TPayment } from "@/state/onboarding"
 import PaymentCard from "./PaymentCard"
-import { PaymentObject } from "@/lib/utils"
 
-export default function Payments({ payments }: { payments: PaymentObject[] }) {
+export type TPaymentsProps = {
+    payments: TPayment[]
+}
+
+export default function Payments({ payments }: TPaymentsProps) {
+    if (!payments || payments.length === 0) return null
     return (
         <>
             <p>Payments</p>
