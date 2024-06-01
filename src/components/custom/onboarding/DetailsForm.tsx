@@ -22,9 +22,9 @@ import {
 } from "@/components/ui"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
-import { cn, generatePayments, PaymentObject } from "@/lib/utils"
+import { cn, generatePayments } from "@/lib/utils"
 import { useCallback, useEffect, useState } from "react"
-import { renewalPeriodEnum, TSubscription } from "@/state/onboarding"
+import { renewalPeriodEnum, TOnboardingForm, TPayment } from "@/state/onboarding"
 import { useFormContext } from "react-hook-form"
 import { z } from "zod"
 import { Minus, Plus } from "lucide-react"
@@ -39,9 +39,9 @@ export type TDetailsFormProps = {
 export default function DetailsForm({ active = false, index }: TDetailsFormProps) {
     const { currencies, selectedServiceId } = useOnboardingStore((state) => state)
 
-    const { watch, ...form } = useFormContext<{ subscriptions: TSubscription[] }>()
+    const { watch, ...form } = useFormContext<TOnboardingForm>()
 
-    const [payments, setPayments] = useState<PaymentObject[]>([])
+    const [payments, setPayments] = useState<TPayment[]>([])
 
     const watchRenewalPeriodEnum = watch(`subscriptions.${index}.renewalPeriodEnum`)
     const watchRenewalPeriodDays = watch(`subscriptions.${index}.renewalPeriodDays`)
@@ -62,15 +62,24 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
 
     useEffect(() => {
         if (watchCreationDate && watchRenewalPeriodEnum) {
-            const newPayments = generatePayments(
-                watchCreationDate,
-                watchRenewalPeriodEnum,
-                watchRenewalPeriodDays,
-                watchRenewalAmount,
-                watchCurrencyId
-            )
-            setPayments(newPayments)
+            const createdPayments = generatePayments({
+                creationDate: watchCreationDate,
+                renewalPeriodEnum: watchRenewalPeriodEnum,
+                amount: watchRenewalAmount,
+                currencyId: watchCurrencyId,
+                renewalPeriodDays: watchRenewalPeriodDays,
+            })
+            setPayments(createdPayments)
+
+            const totalCost = createdPayments
+                .map((p) => parseFloat(p.amount as unknown as string) || 0)
+                .reduce((acc = 0, v) => acc + v)
+
+            form.setValue(`subscriptions.${index}.paymentCount`, createdPayments.length)
+            form.setValue(`subscriptions.${index}.totalCost`, totalCost)
+            form.setValue(`subscriptions.${index}.upcomingPaymentDate`, createdPayments[0].date)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [watchRenewalPeriodDays, watchRenewalPeriodEnum, watchCreationDate, watchRenewalAmount, watchCurrencyId])
 
     if (selectedServiceId === null) return
