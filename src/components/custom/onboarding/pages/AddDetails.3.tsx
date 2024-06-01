@@ -24,7 +24,7 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { setUser, user } = useUserStore((state) => state)
     const { toast } = useToast()
     const { getValues } = useFormContext<TOnboardingForm>()
-    const { fields, append } = fieldArray
+    const { fields } = fieldArray
     const { push } = useRouter()
 
     const {
