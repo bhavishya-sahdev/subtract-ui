@@ -31,6 +31,7 @@ export default async function RootLayout({
         if (header_url.startsWith("/signin") || header_url.startsWith("/signup")) redirect(routes.dashboard.DEFAULT)
         if (header_url.startsWith("/dashboard") && user.isOnboardingComplete === false)
             redirect(routes.dashboard.onboarding)
+        if (user.isOnboardingComplete && header_url.startsWith("/onboarding")) redirect(routes.dashboard.DEFAULT)
     }
 
     return (
