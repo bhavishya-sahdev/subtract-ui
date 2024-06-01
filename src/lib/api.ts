@@ -10,6 +10,7 @@ const api = {
     },
     subscription: {
         create: "/subscription",
+        createWithPayments: "/subscription/payments",
     },
     utils: {
         currency: "/currency",
