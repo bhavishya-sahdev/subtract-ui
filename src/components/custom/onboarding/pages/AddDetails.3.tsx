@@ -1,17 +1,19 @@
 "use client"
 
-import { Button, Form, useToast } from "@/components/ui"
-import { useEffect, useState } from "react"
-import { TOnboardingForm } from "@/state/onboarding"
+import { useState } from "react"
 import { useFieldArray, useFormContext } from "react-hook-form"
+import { ArrowLeft, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-import { ArrowLeft } from "lucide-react"
+import { Button, useToast } from "@/components/ui"
+
 import AddNewTopBar from "../AddNewTopBar"
 import DetailsForm from "../DetailsForm"
-import { initiateNewSubscription } from "@/lib/utils"
+import { createSubscriptionsWithPayments, generatePayments, updateUserOnboardingStatus } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
-import { client } from "@/lib/axiosClient"
-import api from "@/lib/api"
+import { useUserStore } from "@/state/context/UserContext"
+import { TOnboardingForm } from "@/state/onboarding"
+import { routes } from "@/lib/routes"
 
 export type TAddDetailsProps = {
     fieldArray: ReturnType<typeof useFieldArray<TOnboardingForm>>
@@ -19,18 +21,52 @@ export type TAddDetailsProps = {
 
 export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { selectedServiceId, setActivePage } = useOnboardingStore((state) => state)
+    const { setUser, user } = useUserStore((state) => state)
     const { toast } = useToast()
+    const { getValues } = useFormContext<TOnboardingForm>()
     const { fields, append } = fieldArray
+    const { push } = useRouter()
 
-    const { handleSubmit } = useFormContext<TOnboardingForm>()
+    const {
+        handleSubmit,
+        formState: { errors },
+    } = useFormContext<TOnboardingForm>()
 
     const [inProgress, setInProgress] = useState(false)
+
+    const collectPayments = () => {
+        const { subscriptions } = getValues()
+        return subscriptions.map((subscription) => {
+            return generatePayments({
+                creationDate: subscription.creationDate,
+                renewalPeriodEnum: subscription.renewalPeriodEnum,
+                amount: subscription.renewalAmount,
+                currencyId: subscription.currencyId,
+                renewalPeriodDays: subscription.renewalPeriodDays,
+            })
+        })
+    }
 
     async function onSubmit(data: TOnboardingForm) {
         try {
             setInProgress(true)
-            const res = await client.post(api.subscription.create, data.subscriptions)
-            if (res.data !== null) toast({ title: "Subscriptions created successfully" })
+            const res = await createSubscriptionsWithPayments({
+                subscriptions: data.subscriptions,
+                payments: collectPayments(),
+            })
+
+            if (res.data !== null) {
+                toast({ title: "Subscriptions created successfully" })
+                const onboardingStatusRes = await updateUserOnboardingStatus()
+                console.log(onboardingStatusRes)
+                if (onboardingStatusRes.data !== null) {
+                    if (user) setUser({ ...user, isOnboardingComplete: true })
+                    push(routes.dashboard.overview)
+                }
+            } else {
+                // handle errors thrown from backend
+                console.log(res.data)
+            }
         } catch (e: any) {
             toast({
                 variant: "destructive",
@@ -40,14 +76,6 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
         }
         setInProgress(false)
     }
-
-    // if no subscriptions
-    useEffect(() => {
-        if (fields.length === 0) {
-            append(initiateNewSubscription())
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fields])
 
     return (
         <div>
@@ -71,7 +99,9 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                         })}
 
                         {/* show auto generated previous payments */}
-                        <Button className="mt-4">Add or Next or Finish</Button>
+                        <Button className="mt-4" disabled={inProgress}>
+                            {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Save all and proceed
+                        </Button>
                     </form>
                 </div>
             </div>
