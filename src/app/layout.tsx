@@ -26,11 +26,17 @@ export default async function RootLayout({
     const header_url = headersList.get("x-url") || ""
 
     if (user === null) {
+        // redirect to homepage when trying to access protected pages when not logged in
         if (header_url.startsWith("/dashboard/") || header_url.startsWith("/onboarding")) redirect(routes.DEFAULT)
     } else {
+        // redirect to dashboard while accessing auth pages when logged in
         if (header_url.startsWith("/signin") || header_url.startsWith("/signup")) redirect(routes.dashboard.DEFAULT)
+
+        // redirect to onboarding from dashboard if onboarding hasn't been completed
         if (header_url.startsWith("/dashboard") && user.isOnboardingComplete === false)
             redirect(routes.dashboard.onboarding)
+
+        // redirect to dashboard from onboarding if the onboarding process is complete
         if (user.isOnboardingComplete && header_url.startsWith("/onboarding")) redirect(routes.dashboard.DEFAULT)
     }
 
