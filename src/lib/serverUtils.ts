@@ -14,7 +14,7 @@ export const fetchUserDetails = cache(
         const cookieStore = cookies()
         const token = cookieStore.get("token")
         try {
-            const res = await client.get(api.user.getDetails, {
+            const res = await client.get(api.user.getSubscriptions, {
                 headers: {
                     Authorization: `Bearer ${token ? token.value : ""}`,
                 },
