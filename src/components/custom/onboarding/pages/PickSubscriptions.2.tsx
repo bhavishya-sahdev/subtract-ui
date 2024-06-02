@@ -35,7 +35,11 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
     const handleSubmit = () => {
         // default the selected subscription to either a newly created empty object's id
         // the first selected service's id
-        if (fields.length === 0) append(initiateNewSubscription())
+        if (fields.length === 0) {
+            const newSub = initiateNewSubscription()
+            append(newSub)
+            setSelectedServiceId(newSub.uuid)
+        }
         setActivePage(2)
     }
 
