@@ -1,3 +1,4 @@
+import { TSubscription } from "@/state/onboarding"
 import { ReactNode } from "react"
 
 export type TSetterFunction<T extends any[]> = (...args: T) => void
@@ -23,4 +24,5 @@ export type TAxiosUserDetails = {
     createdAt: string
     isOnboardingComplete: boolean
     subscriptionCount: number
+    subscriptions: TSubscription[]
 }
