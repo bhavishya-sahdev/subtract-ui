@@ -75,7 +75,6 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                 .map((p) => parseFloat(p.amount as unknown as string) || 0)
                 .reduce((acc = 0, v) => acc + v)
 
-            form.setValue(`subscriptions.${index}.paymentCount`, createdPayments.length)
             form.setValue(`subscriptions.${index}.totalCost`, totalCost)
             form.setValue(`subscriptions.${index}.upcomingPaymentDate`, createdPayments[0].date)
         }
