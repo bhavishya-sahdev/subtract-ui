@@ -24,5 +24,6 @@ export type TAxiosUserDetails = {
     createdAt: string
     isOnboardingComplete: boolean
     subscriptionCount: number
+    paymentCount: number
     subscriptions: TSubscription[]
 }
