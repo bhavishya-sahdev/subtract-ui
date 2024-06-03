@@ -37,7 +37,6 @@ export const SubscriptionFormSchema = z.object({
     ),
     renewalPeriodEnum: renewalPeriodEnum,
     renewalPeriodDays: z.coerce.number().gte(1).optional(),
-    totalCost: z.coerce.number().nonnegative(),
     uuid: z.string().uuid(),
     upcomingPaymentDate: z.date().min(add(new Date(), { days: 1 })),
 })

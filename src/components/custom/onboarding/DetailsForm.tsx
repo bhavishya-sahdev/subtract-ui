@@ -71,11 +71,6 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
             })
             setPayments(createdPayments)
 
-            const totalCost = createdPayments
-                .map((p) => parseFloat(p.amount as unknown as string) || 0)
-                .reduce((acc = 0, v) => acc + v)
-
-            form.setValue(`subscriptions.${index}.totalCost`, totalCost)
             form.setValue(`subscriptions.${index}.upcomingPaymentDate`, createdPayments[0].date)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
