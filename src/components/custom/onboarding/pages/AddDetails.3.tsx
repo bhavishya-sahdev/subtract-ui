@@ -14,6 +14,7 @@ import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import { useUserStore } from "@/state/context/UserContext"
 import { TOnboardingForm } from "@/state/onboarding"
 import { routes } from "@/lib/routes"
+import { TServerError } from "@/lib/types"
 
 export type TAddDetailsProps = {
     fieldArray: ReturnType<typeof useFieldArray<TOnboardingForm>>
@@ -58,14 +59,24 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
             if (res.data !== null) {
                 toast({ title: "Subscriptions created successfully" })
                 const onboardingStatusRes = await updateUserOnboardingStatus()
-                console.log(onboardingStatusRes)
                 if (onboardingStatusRes.data !== null) {
                     if (user) setUser({ ...user, isOnboardingComplete: true })
                     push(routes.dashboard.overview)
                 }
             } else {
-                // handle errors thrown from backend
-                console.log(res.data)
+                // handle backend zod errors on fields
+                const zodErrors = res.error
+                if ("message" in res.error) {
+                    toast({
+                        variant: "destructive",
+                        title: (zodErrors as TServerError).message,
+                    })
+                } else {
+                    // (zodErrors as z.ZodIssue[]).forEach((error) => {
+                    //     setError(error.path[0], { message: error.message })
+                    // })
+                    // console.log(res.data)
+                }
             }
         } catch (e: any) {
             toast({
