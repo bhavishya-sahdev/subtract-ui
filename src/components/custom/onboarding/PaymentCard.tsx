@@ -8,13 +8,12 @@ import { useCallback, useMemo } from "react"
 export default function PaymentCard({ date, amount, currencyId, status = "paid" }: TPayment) {
     const currencies = useOnboardingStore((state) => state.currencies)
 
-    const renderCurrencySymbol = useCallback(
-        (value: string) => {
+    const renderAmount = useCallback(
+        (value: string, amount: number) => {
             const c = currencies.find((c) => c.uuid === value)
             if (!c) return ""
 
-            if (c.code === c.symbol) return c.code
-            return c.symbol
+            return new Intl.NumberFormat("ja-JP", { style: "currency", currency: c.code }).format(amount)
         },
         [currencies]
     )
@@ -48,10 +47,7 @@ export default function PaymentCard({ date, amount, currencyId, status = "paid" 
         <div className="flex rounded border w-max bg-zinc-900">
             <div className="p-3 w-[200px] bg-background rounded-[3px]">
                 {amount !== undefined && currencyId && currencyId !== "" ? (
-                    <p>
-                        {renderCurrencySymbol(currencyId)}
-                        {amount}
-                    </p>
+                    <p>{renderAmount(currencyId, amount)}</p>
                 ) : null}
                 <p className="text-sm text-muted-foreground mb-3">{format(date, "PPP")}</p>
                 <div className="flex gap-1 items-center">{renderVariantText}</div>
