@@ -27,5 +27,5 @@ export default function Parent() {
         <AddDetails key="page3" fieldArray={fieldArray} />,
     ]
 
-    return <div className="gap-4 h-full p-10">{pages[activePage]}</div>
+    return <div className="gap-4 h-full p-10 bg-zinc-900">{pages[activePage]}</div>
 }
