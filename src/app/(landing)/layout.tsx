@@ -12,7 +12,7 @@ export default async function LandingLayout({
         <div className="h-full">
             <div className="h-[60px] flex items-center p-4 justify-between bg-[#19191C]">
                 <Link href={routes.DEFAULT}>
-                    <Button variant="ghost" className="text-lg font-bold hover:bg-transparent">
+                    <Button variant="ghost" className="text-lg font-bold px-0 hover:bg-transparent">
                         Subtract
                     </Button>
                 </Link>
