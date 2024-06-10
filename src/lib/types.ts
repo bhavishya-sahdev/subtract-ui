@@ -1,5 +1,6 @@
 import { TSubscription } from "@/state/onboarding"
 import { ReactNode } from "react"
+import { z } from "zod"
 
 export type TSetterFunction<T extends any[]> = (...args: T) => void
 
@@ -15,6 +16,12 @@ export type TAxiosErrorResponse<T> = {
     data: null
     error: T
 }
+
+export type TServerError = {
+    message: string
+}
+
+export type TError = TServerError | z.ZodIssue[]
 
 export type TAxiosUserDetails = {
     uuid: string

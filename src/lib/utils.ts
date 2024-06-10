@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from "clsx"
 import { add, addDays, addMonths, addYears } from "date-fns"
 import { twMerge } from "tailwind-merge"
 import { v4 as uuid } from "uuid"
-import { TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails } from "./types"
+import { TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails, TError } from "./types"
 import { z } from "zod"
 import { client } from "./axiosClient"
 import api from "./api"
@@ -21,7 +21,7 @@ export const createSubscriptionsWithPayments = async <T extends Record<string, a
               subscriptionId: string
           }[]
       }>
-    | TAxiosErrorResponse<z.ZodError | { message: string }>
+    | TAxiosErrorResponse<TError>
 > => {
     try {
         const res = await client.post(api.subscription.createWithPayments, data)
@@ -113,8 +113,6 @@ export const initiateNewSubscription = (subscription?: Partial<TSubscription>): 
         renewalAmount: 0,
         renewalPeriodDays: 1,
         creationDate: new Date(),
-        paymentCount: 0,
-        totalCost: 0,
         upcomingPaymentDate: add(new Date(), { months: 1 }),
         ...subscription,
     }
