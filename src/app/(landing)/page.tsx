@@ -1,14 +1,16 @@
-import { Button } from "@/components/ui"
+import { Button, Input } from "@/components/ui"
 import { BellOff, Calendar, CirclePercent, Folders, LineChart, ListTodo, Telescope, Users } from "lucide-react"
 
 export default function Home() {
     return (
         <>
             <section className="bg-gradient-to-b from-[#19191C] to-[#24242B] md:py-10">
-                <div className="max-w-screen-lg px-4 space-y-4 mx-auto sm:space-y-8 md:space-y-12 ">
-                    <div>
-                        <h1 className="text-2xl pt-6 mb-1">Take Control of Your Subscriptions with Subtract</h1>
-                        <p className="text-muted-foreground">
+                <div className="max-w-screen-lg px-4 space-y-4 mx-auto pb-20 sm:space-y-8 md:space-y-12 sm:pb-44">
+                    <div className="max-w-[800px] mx-auto">
+                        <h1 className="text-2xl md:text-3xl font-bold pt-6 mb-1 sm:text-center">
+                            Take Control of Your Subscriptions with Subtract
+                        </h1>
+                        <p className="text-muted-foreground sm:text-center">
                             Never miss a renewal or get charged for something you&apos;re not using. Subtract makes
                             managing subscriptions effortless.
                         </p>
