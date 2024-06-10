@@ -14,7 +14,13 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <Button>Get Started</Button>
+                    <div className="space-y-2">
+                        <div className="flex gap-2 items-center sm:justify-center sm:gap-3">
+                            <Input type="email" placeholder="email@example.com" className="w-full sm:w-[300px]" />
+                            <Button size="sm">Sign Up</Button>
+                        </div>
+                        <p className="text-zinc-400 text-xs sm:text-center">Sign up to get notified when we launch.</p>
+                    </div>
 
                     <div className="h-[600px] rounded-t-lg bg-zinc-800"></div>
                 </div>
