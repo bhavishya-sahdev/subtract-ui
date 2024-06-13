@@ -24,7 +24,7 @@ const DashboardNav = () => {
 
     if (user === null) return null
     return (
-        <nav className="border-b">
+        <nav>
             <div className="flex h-16 items-center px-4">
                 <div className="flex items-center space-x-4 lg:space-x-6 mx-4">
                     <Link href={routes.DEFAULT} className="text-sm font-medium transition-colors hover:text-primary">
@@ -34,13 +34,7 @@ const DashboardNav = () => {
                         href={routes.dashboard.overview}
                         className="text-sm font-medium transition-colors hover:text-primary"
                     >
-                        Overview
-                    </Link>
-                    <Link
-                        href={routes.dashboard.details}
-                        className="text-sm font-medium transition-colors hover:text-primary"
-                    >
-                        Details
+                        Dashboard
                     </Link>
                     <Link
                         href={routes.dashboard.settings}
