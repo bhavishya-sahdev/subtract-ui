@@ -79,8 +79,8 @@ export default function LoginForm() {
 
     return (
         <div className="w-full max-w-sm p-4">
-            <p className="text-3xl mb-1">Login</p>
-            <p className="mb-8">Enter your email below to login to your account.</p>
+            <p className="text-3xl font-semibold mb-1">Login</p>
+            <p className="mb-8 text-muted-foreground">Enter your email below to login to your account.</p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="block">
                     <div className="grid gap-2">
@@ -117,7 +117,7 @@ export default function LoginForm() {
                     </Button>
                 </form>
             </Form>
-            <div className="mx-auto mt-2 text-center text-sm">
+            <div className="mx-auto mt-2 text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{" "}
                 <Link href={routes.auth.signup} className="underline">
                     Sign up
