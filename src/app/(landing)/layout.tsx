@@ -17,8 +17,20 @@ export default async function LandingLayout({
                     </Button>
                 </Link>
                 <div>
+                    <div className="hidden md:flex">
+                        <Link href={routes.auth.login}>
+                            <Button variant="link" className="text-foreground justify-start">
+                                Sign in
+                            </Button>
+                        </Link>
+                        <Link href={routes.auth.signup}>
+                            <Button variant="link" className="text-foreground justify-start">
+                                Sign up
+                            </Button>
+                        </Link>
+                    </div>
                     <Sheet>
-                        <SheetTrigger asChild>
+                        <SheetTrigger asChild className="sm:hidden">
                             <Button size="icon" variant="ghost">
                                 <Menu />
                             </Button>
