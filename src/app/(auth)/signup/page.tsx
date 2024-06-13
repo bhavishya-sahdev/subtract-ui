@@ -80,8 +80,8 @@ export default function SignupForm() {
 
     return (
         <div className="w-full max-w-sm p-4">
-            <p className="text-3xl mb-1">Sign up for Subtract</p>
-            <p className="mb-8">Get an account going in seconds!</p>
+            <p className="text-3xl font-semibold mb-1">Sign up for Subtract</p>
+            <p className="mb-8 text-muted-foreground">Get an account going in seconds!</p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="block">
                     <div className="grid gap-2">
@@ -130,7 +130,7 @@ export default function SignupForm() {
                             Create an account
                         </Button>
                     </div>
-                    <div className="mx-auto mt-2 text-center text-sm">
+                    <div className="mx-auto mt-2 text-center text-sm text-muted-foreground">
                         Already have an account?{" "}
                         <Link href={routes.auth.login} className="underline">
                             Sign in
