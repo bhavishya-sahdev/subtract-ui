@@ -8,11 +8,12 @@ export default async function DashboardLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="h-full overflow-y-auto flex flex-col bg-gradient-to-b from-[#19191C] to-[#24242B]">
             <DashboardNav />
-            <div className="flex flex-1">
-                <div className="space-y-4 p-8 pt-6 flex-1">{children}</div>
-            </div>
+            <main className="px-8 flex flex-col justify-between h-full ">{children}</main>
+            <footer className="p-2">
+                <p className="text-center text-muted-foreground text-xs">&copy; 2024 Subtract. All Rights Reserved</p>
+            </footer>
         </div>
     )
 }
