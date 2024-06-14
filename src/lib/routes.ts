@@ -5,6 +5,7 @@ export const routes = {
         details: "/dashboard/details",
         onboarding: "/onboarding",
         DEFAULT: "/dashboard",
+        subscriptions: "/dashboard/subscriptions",
     },
     auth: {
         signup: "/signup",
