@@ -4,13 +4,11 @@ import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMe
 import { useUserStore } from "@/state/context/UserContext"
 import { format } from "date-fns"
 import { ArrowRight, EllipsisVertical } from "lucide-react"
-import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 export default function Subscriptions() {
     const user = useUserStore((state) => state.user)
     const [selectedSubscription, setSelectedSubscription] = useState(user?.subscriptions[0])
-    const pathname = usePathname()
 
     if (!user) return
 
