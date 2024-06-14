@@ -7,7 +7,7 @@ import { useUserStore } from "@/state/context/UserContext"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
     children, // will be a page or nested layout
 }: {
     children: React.ReactNode
