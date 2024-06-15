@@ -8,10 +8,14 @@ export default async function DashboardLayout({
     return (
         <div className="h-full flex flex-col bg-gradient-to-b from-[#19191C] to-[#24242B]">
             <DashboardNav />
-            <main className="px-8 flex flex-col justify-between h-full  overflow-y-auto">{children}</main>
-            <footer className="p-2">
-                <p className="text-center text-muted-foreground text-xs">&copy; 2024 Subtract. All Rights Reserved</p>
-            </footer>
+            <div className="px-8 flex flex-col justify-between h-full w-full max-w-screen-lg mx-auto overflow-y-auto">
+                {children}
+                <footer className="p-2">
+                    <p className="text-center text-muted-foreground text-xs">
+                        &copy; 2024 Subtract. All Rights Reserved
+                    </p>
+                </footer>
+            </div>
         </div>
     )
 }
