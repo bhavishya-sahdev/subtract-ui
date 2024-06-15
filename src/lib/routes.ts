@@ -1,11 +1,11 @@
 export const routes = {
     dashboard: {
-        overview: "/dashboard/overview",
+        overview: "/dashboard",
         settings: "/dashboard/settings",
-        details: "/dashboard/details",
         onboarding: "/onboarding",
         DEFAULT: "/dashboard",
         subscriptions: "/dashboard/subscriptions",
+        payments: "/dashboard/payments",
     },
     auth: {
         signup: "/signup",
