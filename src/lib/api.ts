@@ -6,6 +6,7 @@ const api = {
     user: {
         getDetails: "/user",
         getSubscriptions: "/user/subscriptions",
+        getPayments: "/user/payments",
         updateOnboardingStatus: "/user/update-onboarding-status",
     },
     subscription: {
