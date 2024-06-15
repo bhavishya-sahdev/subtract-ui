@@ -1,20 +1,27 @@
 "use client"
 
-import { createContext, useContext, useRef } from "react"
+import { createContext, useContext, useEffect, useRef } from "react"
 import { createUserStore, TUserStore } from "../user"
 import { StoreApi, useStore } from "zustand"
-import { IDefaultStoreProviderProps, TAxiosUserDetails } from "@/lib/types"
+import { IDefaultStoreProviderProps, TAxiosPaymentDetails, TAxiosUserDetails } from "@/lib/types"
+import { setCurrencyList } from "@/lib/utils"
 
 const UserContext = createContext<StoreApi<TUserStore> | null>(null)
 
 export const UserStoreProvider = ({
     children,
     user,
-}: IDefaultStoreProviderProps & { user: TAxiosUserDetails | null }) => {
+    payments,
+}: IDefaultStoreProviderProps & { user: TAxiosUserDetails | null; payments: TAxiosPaymentDetails[] }) => {
     const storeRef = useRef<StoreApi<TUserStore>>()
     if (!storeRef.current) {
-        storeRef.current = createUserStore(user)
+        storeRef.current = createUserStore(user, [], payments)
     }
+
+    useEffect(() => {
+        // eslint-disable-next-line no-extra-semi
+        ;(async () => setCurrencyList())()
+    }, [])
 
     return <UserContext.Provider value={storeRef.current}>{children}</UserContext.Provider>
 }
