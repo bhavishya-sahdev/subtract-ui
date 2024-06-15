@@ -28,7 +28,7 @@ export default function Home() {
                 </div>
             </section>
             {/* About section */}
-            <section className="bg-[#24242B] sm:py-10 md:py-20">
+            <section id="about" className="bg-[#24242B] sm:py-10 md:py-20">
                 <div className="max-w-screen-lg px-4 py-8 space-y-4 mx-auto">
                     <h2 className="text-2xl font-semibold">About</h2>
                     <p>
@@ -45,7 +45,7 @@ export default function Home() {
             </section>
 
             {/* Features section */}
-            <section className="bg-[#1C1C21] sm:py-10 md:py-20">
+            <section id="features" className="bg-[#1C1C21] sm:py-10 md:py-20">
                 <div className="py-8 space-y-4 max-w-screen-lg mx-auto px-4">
                     <div className="">
                         <h2 className="text-2xl font-semibold">Features</h2>
@@ -140,7 +140,7 @@ export default function Home() {
                 </div>
             </section>
             {/* Pricing section */}
-            <section className=" sm:py-10 md:py-20">
+            <section id="pricing" className=" sm:py-10 md:py-20">
                 <div className="max-w-screen-lg px-4 py-8 space-y-4 mx-auto">
                     <div className="space-y-1">
                         <h2 className="text-2xl font-semibold">Pricing</h2>
