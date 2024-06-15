@@ -1,26 +1,75 @@
 "use client"
 
+import PaymentsTable from "@/components/custom/dashboard/PaymentsTable"
+import SimpleCard from "@/components/custom/dashboard/SimpleCard"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui"
+import { TAxiosCurrencyDetails } from "@/lib/types"
+import { cn, getCurrencyList } from "@/lib/utils"
 import { useUserStore } from "@/state/context/UserContext"
+import { TSubscription } from "@/state/onboarding"
 import { format } from "date-fns"
 import { ArrowRight, EllipsisVertical } from "lucide-react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 
 export default function Subscriptions() {
     const user = useUserStore((state) => state.user)
+    const payments = useUserStore((state) => state.payments)
     const [selectedSubscription, setSelectedSubscription] = useState(user?.subscriptions[0])
+
+    const currencies: TAxiosCurrencyDetails[] = getCurrencyList()
+    const renderAmount = useCallback(
+        (value: string, amount: number) => {
+            const c = currencies.find((c) => c.uuid === value)
+            if (!c) return ""
+
+            return new Intl.NumberFormat("en-US", { style: "currency", currency: c.code }).format(amount)
+        },
+        [currencies]
+    )
+
+    const getTotalAmountForYear = useCallback(
+        (subscription: TSubscription) => {
+            // get payments where year is the same as current year
+            const total = payments.reduce((acc, payment) => {
+                if (
+                    payment.subscriptionId === subscription.uuid &&
+                    new Date(payment.date).getFullYear() === new Date().getFullYear()
+                ) {
+                    acc += parseFloat(payment.amount as unknown as string)
+                }
+                return acc
+            }, 0)
+
+            return renderAmount(subscription.currencyId!, total)
+        },
+        [payments, renderAmount]
+    )
+
+    const getTotalAmount = useCallback(
+        (subscription: TSubscription) => {
+            const total = payments.reduce((acc, payment) => {
+                if (payment.subscriptionId === subscription.uuid) {
+                    acc += parseFloat(payment.amount as unknown as string)
+                }
+                return acc
+            }, 0)
+
+            return renderAmount(subscription.currencyId!, total)
+        },
+        [payments, renderAmount]
+    )
 
     if (!user) return
 
     return (
         <div className="space-y-4 py-4 md:space-y-0 md:grid md:grid-cols-[minmax(200px,0.25fr)_1fr] md:gap-4">
             {/* sidebar */}
-            <div className="w-full h-max rounded-lg overflow-hidden bg-zinc-800">
+            <div className="w-full h-max max-h-[320px] rounded-lg overflow-y-auto bg-zinc-800">
                 {user.subscriptions.map((subscription) => (
                     <Button
                         key={subscription.uuid}
                         variant="ghost"
-                        className="rounded-none w-full justify-between"
+                        className="rounded-none w-full justify-between capitalize"
                         onClick={() => setSelectedSubscription(subscription)}
                     >
                         {subscription.name} <ArrowRight size={20} />
@@ -30,7 +79,7 @@ export default function Subscriptions() {
 
             {/* content */}
             {selectedSubscription && (
-                <div className="space-y-2">
+                <div>
                     <div className="flex rounded-lg justify-between items-center bg-zinc-800 px-4 py-2">
                         <div className="flex items-center gap-2">
                             <div className="p-1.5 h-max bg-green-500 rounded-full"></div>
@@ -64,33 +113,34 @@ export default function Subscriptions() {
                             </Button>
                         </div>
                     </div>
-                    <div className="space-y-2 [&>div]:rounded-lg [&>div]:bg-zinc-700 [&>div]:p-4 md:grid md:grid-cols-3 md:gap-2 md:space-y-0">
-                        <div>
-                            <p className="text-muted-foreground">Subscribed on</p>
-                            <p className="text-lg font-semibold">
-                                {typeof selectedSubscription.creationDate === "string"
-                                    ? format(new Date(selectedSubscription.creationDate), "MMMM dd, yyyy")
-                                    : format(selectedSubscription.creationDate, "MMMM dd, yyyy")}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground">Next Renewal on</p>
-                            <p className="text-lg font-semibold">
-                                {typeof selectedSubscription.upcomingPaymentDate === "string"
-                                    ? format(new Date(selectedSubscription.upcomingPaymentDate), "MMMM dd, yyyy")
-                                    : format(selectedSubscription.upcomingPaymentDate, "MMMM dd, yyyy")}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground">Billing Cycle</p>
-                            <p className="text-lg font-semibold">
-                                {selectedSubscription.renewalPeriodEnum}
-                                {selectedSubscription.renewalPeriodEnum === "custom" &&
-                                    `, every ${selectedSubscription.renewalPeriodDays} weeks`}
-                            </p>
-                        </div>
+                    <div className="mt-2 space-y-2 [&>div]:rounded-lg [&>div]:bg-zinc-700 [&>div]:p-4 md:grid md:grid-cols-3 md:gap-2 md:space-y-0">
+                        <SimpleCard
+                            title="Subscribed on"
+                            description={format(new Date(selectedSubscription.creationDate), "MMMM dd, yyyy")}
+                        />
+                        <SimpleCard
+                            title="Next Renewal on"
+                            description={format(new Date(selectedSubscription.upcomingPaymentDate), "MMMM dd, yyyy")}
+                        />
+                        <SimpleCard title="Billing Cycle" description={selectedSubscription.renewalPeriodEnum} />
+                        <SimpleCard
+                            title="Renewal Amount"
+                            description={renderAmount(
+                                selectedSubscription.currencyId!,
+                                selectedSubscription.renewalAmount
+                            )}
+                        />
+                        <SimpleCard title="Total this year" description={getTotalAmountForYear(selectedSubscription)} />
+                        <SimpleCard title="Lifetime spends" description={getTotalAmount(selectedSubscription)} />
                     </div>
-                    <p>Payments</p>
+                    <div className="mt-6 space-y-2">
+                        <p className="text-xl font-semibold">Payments</p>
+                        <PaymentsTable
+                            payments={payments.filter(
+                                (payment) => payment.subscriptionId === selectedSubscription.uuid
+                            )}
+                        />
+                    </div>
                 </div>
             )}
         </div>
