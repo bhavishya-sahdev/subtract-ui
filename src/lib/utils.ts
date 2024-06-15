@@ -3,10 +3,11 @@ import { type ClassValue, clsx } from "clsx"
 import { add, addDays, addMonths, addYears } from "date-fns"
 import { twMerge } from "tailwind-merge"
 import { v4 as uuid } from "uuid"
-import { TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails, TError } from "./types"
+import { TAxiosCurrencyDetails, TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails, TError } from "./types"
 import { z } from "zod"
 import { client } from "./axiosClient"
 import api from "./api"
+import { fetchAllCurrencies } from "./serverUtils"
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -94,12 +95,12 @@ export function generatePayments({
     }
 
     while (nextPaymentDate <= tomorrow) {
-        payments.push({ date: new Date(nextPaymentDate), amount, currencyId, status: "paid" })
+        payments.push({ date: new Date(nextPaymentDate), amount, currencyId, paymentStatusEnum: "paid" })
         getNextPaymentDate()
     }
 
     // Add one pending payment for the future
-    payments.push({ date: new Date(nextPaymentDate), amount, currencyId, status: "upcoming" })
+    payments.push({ date: new Date(nextPaymentDate), amount, currencyId, paymentStatusEnum: "upcoming" })
 
     return payments.reverse()
 }
@@ -116,4 +117,27 @@ export const initiateNewSubscription = (subscription?: Partial<TSubscription>): 
         upcomingPaymentDate: add(new Date(), { months: 1 }),
         ...subscription,
     }
+}
+
+export const setCurrencyList = async () => {
+    "use client"
+
+    const currencies = localStorage.getItem("currencies")
+    if (currencies) return
+
+    try {
+        const res = await fetchAllCurrencies()
+        if (res.data) {
+            localStorage.setItem("currencies", JSON.stringify(res.data))
+        }
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+export const getCurrencyList = (): TAxiosCurrencyDetails[] => {
+    if (typeof window === "undefined") return []
+    const currencies = window.localStorage.getItem("currencies")
+    if (!currencies) return []
+    return JSON.parse(currencies)
 }
