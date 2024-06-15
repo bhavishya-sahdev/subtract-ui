@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, MutableRefObject, useContext, useEffect, useRef } from "react"
+import { createContext, useContext, useRef } from "react"
 import { StoreApi, useStore } from "zustand"
 import { createOnboardingStore, TOnboardingStore } from "../onboarding"
 import { IDefaultStoreProviderProps } from "@/lib/types"
