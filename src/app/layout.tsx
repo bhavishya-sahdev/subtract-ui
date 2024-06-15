@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
-import { fetchUserDetails } from "@/lib/serverUtils"
+import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 import { UserStoreProvider } from "@/state/context/UserContext"
 import { headers } from "next/headers"
 import { routes } from "@/lib/routes"
@@ -21,6 +21,7 @@ export default async function RootLayout({
 }>) {
     // fetch user details once in the root layout
     const { data: user } = await fetchUserDetails()
+    const { data: payments } = await fetchUserPayments()
 
     const headersList = headers()
     const header_url = headersList.get("x-url") || ""
@@ -43,7 +44,9 @@ export default async function RootLayout({
     return (
         <html lang="en" className="dark">
             <body className={inter.className}>
-                <UserStoreProvider user={user ? user : null}>{children}</UserStoreProvider>
+                <UserStoreProvider user={user ? user : null} payments={payments || []}>
+                    {children}
+                </UserStoreProvider>
                 <Toaster />
             </body>
         </html>
