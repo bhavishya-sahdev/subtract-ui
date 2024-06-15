@@ -12,7 +12,7 @@ import api from "@/lib/api"
 import Link from "next/link"
 import { routes } from "@/lib/routes"
 import { useToast } from "@/components/ui/use-toast"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { fetchUserDetails } from "@/lib/serverUtils"
@@ -26,6 +26,14 @@ export default function LoginForm() {
     const { toast } = useToast()
     const { push } = useRouter()
     const setUser = useUserStore((state) => state.setUser)
+    const user = useUserStore((state) => state.user)
+
+    useEffect(() => {
+        // if user is already logged in, redirect to dashboard
+        if (user) push(user.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user])
+
     // initialize form
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -65,8 +73,6 @@ export default function LoginForm() {
             // if fails show error and don't redirect
             if (user.data) setUser(user.data)
             else return toast({ title: "Failed to get user details", description: "Please try again later" })
-
-            push(user.data.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
         } catch (e: any) {
             toast({
                 variant: "destructive",
