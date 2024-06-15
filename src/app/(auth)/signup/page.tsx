@@ -12,7 +12,7 @@ import { client } from "@/lib/axiosClient"
 import api from "@/lib/api"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { fetchUserDetails } from "@/lib/serverUtils"
 import { useUserStore } from "@/state/context/UserContext"
@@ -27,6 +27,13 @@ export default function SignupForm() {
     const { toast } = useToast()
     const { push } = useRouter()
     const setUser = useUserStore((state) => state.setUser)
+    const user = useUserStore((state) => state.user)
+
+    useEffect(() => {
+        // if user is already logged in, redirect to dashboard
+        if (user) push(user.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user])
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -66,8 +73,6 @@ export default function SignupForm() {
             // if fails show error and don't redirect
             if (user.data) setUser(user.data)
             else return toast({ title: "Failed to get user details", description: "Please try again later" })
-
-            push(user.data.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
         } catch (e: any) {
             toast({
                 variant: "destructive",
