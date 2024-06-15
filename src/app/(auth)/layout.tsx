@@ -1,6 +1,4 @@
-import { routes } from "@/lib/routes"
-import { fetchUserDetails } from "@/lib/serverUtils"
-import { redirect } from "next/navigation"
+import LandingNav from "@/components/custom/landing/Nav"
 
 export default async function AuthLayout({
     children, // will be a page or nested layout
@@ -8,8 +6,12 @@ export default async function AuthLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="h-full flex items-center justify-center bg-gradient-to-b from-[#19191C] to-[#24242B]">
-            {children}
+        <div className="h-full flex flex-col">
+            <LandingNav />
+
+            <div className="h-full flex md:items-center justify-center bg-gradient-to-b from-[#19191C] to-[#24242B]">
+                <div>{children}</div>
+            </div>
         </div>
     )
 }
