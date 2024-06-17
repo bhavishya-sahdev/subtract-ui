@@ -15,7 +15,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { fetchUserDetails } from "@/lib/serverUtils"
+import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 import { useUserStore } from "@/state/context/UserContext"
 
 const FormSchema = z.object({
@@ -26,11 +26,19 @@ export default function LoginForm() {
     const { toast } = useToast()
     const { push } = useRouter()
     const setUser = useUserStore((state) => state.setUser)
+    const setPayments = useUserStore((state) => state.setPayments)
     const user = useUserStore((state) => state.user)
 
     useEffect(() => {
         // if user is already logged in, redirect to dashboard
-        if (user) push(user.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
+        if (user) {
+            // eslint-disable-next-line no-extra-semi
+            ;(async () => {
+                const { data: payments } = await fetchUserPayments()
+                if (payments) setPayments(payments)
+                push(user.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
+            })()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user])
 
