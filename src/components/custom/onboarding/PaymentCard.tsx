@@ -1,32 +1,34 @@
-import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
-import { useOnboardingStore } from "@/state/context/OnboardingContext"
+"use client"
+
+import { TAxiosCurrencyDetails } from "@/lib/types"
+import { getCurrencyList } from "@/lib/utils"
 import { TPayment } from "@/state/onboarding"
 import { format } from "date-fns"
-import { CircleAlert, CircleCheck, Info, SquarePen, Trash2 } from "lucide-react"
+import { CircleAlert, CircleCheck, Info } from "lucide-react"
 import { useCallback, useMemo } from "react"
 
-export default function PaymentCard({ date, amount, currencyId, status = "paid" }: TPayment) {
-    const currencies = useOnboardingStore((state) => state.currencies)
+export default function PaymentCard({ date, amount, currencyId, paymentStatusEnum = "paid" }: TPayment) {
+    const currencies: TAxiosCurrencyDetails[] = getCurrencyList()
 
     const renderAmount = useCallback(
         (value: string, amount: number) => {
             const c = currencies.find((c) => c.uuid === value)
             if (!c) return ""
 
-            return new Intl.NumberFormat("ja-JP", { style: "currency", currency: c.code }).format(amount)
+            return new Intl.NumberFormat("en-US", { style: "currency", currency: c.code }).format(amount)
         },
         [currencies]
     )
 
     const renderVariantText = useMemo(() => {
-        if (status === "paid") {
+        if (paymentStatusEnum === "paid") {
             return (
                 <>
                     <CircleCheck size="16" className="stroke-green-600" />
                     <p className="text-sm text-green-600">Paid</p>
                 </>
             )
-        } else if (status === "pending") {
+        } else if (paymentStatusEnum === "pending") {
             return (
                 <>
                     <CircleAlert size="16" className="stroke-red-600" />
@@ -41,7 +43,7 @@ export default function PaymentCard({ date, amount, currencyId, status = "paid" 
                 </>
             )
         }
-    }, [status])
+    }, [paymentStatusEnum])
 
     return (
         <div className="flex rounded border w-max bg-zinc-900">
