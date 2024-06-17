@@ -80,8 +80,8 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
     if (!active) return
 
     return (
-        <div>
-            <div className="space-y-4">
+        <div className="w-full">
+            <div className="space-y-4 w-full">
                 {/* name */}
                 <FormField
                     control={form.control}
@@ -112,7 +112,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                                                 id="subscription_created_date"
                                                 variant={"outline"}
                                                 className={cn(
-                                                    "w-[240px] pl-3 text-left font-normal",
+                                                    "md:w-[240px] pl-3 text-left font-normal",
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
@@ -142,12 +142,12 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="currency">Subscription Charges</Label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col md:flex-row gap-2">
                         <FormField
                             control={form.control}
                             name={`subscriptions.${index}.currencyId`}
                             render={({ field }) => (
-                                <FormItem className="w-[300px]">
+                                <FormItem className="w-full md:w-[300px]">
                                     <Select
                                         value={field.value}
                                         onValueChange={(v) => {
@@ -201,12 +201,12 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="subscription_charges">Renewal Period</Label>
-                    <div className="flex gap-2" id="subscription_charges">
+                    <div className="flex flex-col md:flex-row gap-2" id="subscription_charges">
                         <FormField
                             control={form.control}
                             name={`subscriptions.${index}.renewalPeriodEnum`}
                             render={({ field }) => (
-                                <FormItem className="w-[280px]">
+                                <FormItem className="w-full md:w-[280px]">
                                     <Select
                                         value={field.value}
                                         onValueChange={(v: z.infer<typeof renewalPeriodEnum>) => {
@@ -286,7 +286,7 @@ export default function DetailsForm({ active = false, index }: TDetailsFormProps
                     <FormDescription>How long is the billing cycle?</FormDescription>
                 </div>
             </div>
-            <div className="my-4 space-y-2">
+            <div className="my-4 space-y-2 w-full">
                 <Payments payments={payments} />
             </div>
         </div>
