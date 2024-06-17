@@ -34,3 +34,27 @@ export type TAxiosUserDetails = {
     paymentCount: number
     subscriptions: TSubscription[]
 }
+
+export type TPaymentStatusEnum = "pending" | "paid" | "upcoming"
+
+export type TAxiosPaymentDetails = {
+    uuid: string
+    amount: number
+    currencyId: string
+    paymentMethod: string | null
+    date: string
+    subscriptionId: string
+    ownerId: string
+    paymentStatusEnum: TPaymentStatusEnum
+}
+
+export type TAxiosCurrencyDetails = {
+    uuid: string
+    symbol: string
+    name: string
+    symbolNative: string
+    decimalDigits: number
+    rounding: string
+    code: string
+    namePlural: string
+}
