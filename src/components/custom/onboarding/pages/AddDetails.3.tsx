@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 
 import { Button, useToast } from "@/components/ui"
 
-import AddNewTopBar from "../AddNewTopBar"
+import AddNewTopBar from "../AddNewSidebar"
 import DetailsForm from "../DetailsForm"
 import { createSubscriptionsWithPayments, generatePayments, updateUserOnboardingStatus } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
@@ -90,20 +90,24 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
 
     return (
         <div>
-            <Button variant="ghost" size="sm" className="space-x-2 mb-2" onClick={() => setActivePage(1)}>
-                <ArrowLeft size="20" />
-                <span>Go Back</span>
-            </Button>
-
-            <div className="grid grid-cols-[max-content_minmax(0,100%)] items-start gap-8">
-                <div className="justify-self-end">
-                    <AddNewTopBar fieldArray={fieldArray} />
-                </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-[300px_minmax(0,100%)] items-start gap-4 md:gap-8">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="space-x-2 justify-start w-max"
+                    onClick={() => setActivePage(1)}
+                >
+                    <ArrowLeft size="20" />
+                    <span>Go Back</span>
+                </Button>
                 <div>
                     <p className="text-2xl">Add details</p>
-                    <p className="pb-4 text-muted-foreground">This is where the magic happens.</p>
+                    <p className="text-muted-foreground">This is where the magic happens.</p>
+                </div>
 
+                <AddNewTopBar fieldArray={fieldArray} />
+
+                <div>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         {fields.map((item, idx) => {
                             return <DetailsForm key={item.id} active={item.uuid === selectedServiceId} index={idx} />
