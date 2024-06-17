@@ -47,7 +47,7 @@ export default function Home() {
             {/* Features section */}
             <section id="features" className="bg-[#1C1C21] sm:py-10 md:py-20">
                 <div className="py-8 space-y-4 max-w-screen-lg mx-auto px-4">
-                    <div className="">
+                    <div>
                         <h2 className="text-2xl font-semibold">Features</h2>
                     </div>
 
