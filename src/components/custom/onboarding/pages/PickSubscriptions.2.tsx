@@ -1,3 +1,5 @@
+"use client"
+
 import { Button, Card, CardContent, Label, ToggleGroup, ToggleGroupItem } from "@/components/ui"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { initiateNewSubscription } from "@/lib/utils"
@@ -51,7 +53,7 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
                 <CardContent className="p-4">
                     <ToggleGroup
                         type="multiple"
-                        className="grid grid-cols-3 gap-4"
+                        className="flex flex-wrap justify-start overflow-x-hidden gap-4"
                         size="custom"
                         onValueChange={(v: string[]) => handleToggleSelection(v)}
                         value={selectedPrefabs}
