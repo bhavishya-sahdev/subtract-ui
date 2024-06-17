@@ -4,7 +4,7 @@ import PaymentsTable from "@/components/custom/dashboard/PaymentsTable"
 import SimpleCard from "@/components/custom/dashboard/SimpleCard"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui"
 import { TAxiosCurrencyDetails } from "@/lib/types"
-import { cn, getCurrencyList } from "@/lib/utils"
+import { getCurrencyList } from "@/lib/utils"
 import { useUserStore } from "@/state/context/UserContext"
 import { TSubscription } from "@/state/onboarding"
 import { format } from "date-fns"
@@ -16,7 +16,7 @@ export default function Subscriptions() {
     const payments = useUserStore((state) => state.payments)
     const [selectedSubscription, setSelectedSubscription] = useState(user?.subscriptions[0])
 
-    const currencies: TAxiosCurrencyDetails[] = getCurrencyList()
+    const [currencies] = useState<TAxiosCurrencyDetails[]>(getCurrencyList())
     const renderAmount = useCallback(
         (value: string, amount: number) => {
             const c = currencies.find((c) => c.uuid === value)
@@ -62,7 +62,7 @@ export default function Subscriptions() {
     if (!user) return
 
     return (
-        <div className="space-y-4 py-4 md:space-y-0 md:grid md:grid-cols-[minmax(200px,0.25fr)_1fr] md:gap-4">
+        <div className="space-y-4 h-full py-4 md:space-y-0 md:grid md:grid-cols-[minmax(200px,0.25fr)_1fr] md:gap-4">
             {/* sidebar */}
             <div className="w-full h-max max-h-[320px] rounded-lg overflow-y-auto bg-zinc-800">
                 {user.subscriptions.map((subscription) => (
