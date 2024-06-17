@@ -9,14 +9,13 @@ import { useFieldArray } from "react-hook-form"
 import { TSubscription } from "@/state/onboarding"
 
 export default function Parent() {
-    const { activePage, setCurrencies, setPrefabs } = useOnboardingStore((state) => state)
+    const { activePage, setPrefabs } = useOnboardingStore((state) => state)
 
     const fieldArray = useFieldArray<{ subscriptions: TSubscription[] }>({
         name: "subscriptions",
     })
 
     useEffect(() => {
-        setCurrencies()
         setPrefabs()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -27,5 +26,9 @@ export default function Parent() {
         <AddDetails key="page3" fieldArray={fieldArray} />,
     ]
 
-    return <div className="gap-4 h-full p-10 bg-zinc-900">{pages[activePage]}</div>
+    return (
+        <div className="gap-4 min-h-max h-full p-4 mx-auto w-full max-w-screen-lg overflow-auto">
+            {pages[activePage]}
+        </div>
+    )
 }
