@@ -10,7 +10,7 @@ export default function Payments({ payments }: TPaymentsProps) {
     return (
         <>
             <p>Payments</p>
-            <div className="flex gap-4 overflow-auto pr-10 scrollbar-hide">
+            <div className="flex gap-4 overflow-auto pr-10">
                 {payments.map((payment, idx) => (
                     <PaymentCard key={idx} {...payment} />
                 ))}
