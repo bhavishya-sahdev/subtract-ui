@@ -1,4 +1,4 @@
-import { fetchAllCurrencies, fetchPrefabs } from "@/lib/serverUtils"
+import { fetchPrefabs } from "@/lib/serverUtils"
 import { TSetterFunction } from "@/lib/types"
 import { add } from "date-fns"
 import { z } from "zod"
@@ -21,7 +21,7 @@ export type TPaymentStatus = z.infer<typeof PaymentStatus>
 
 export const PaymentSchema = z.object({
     date: z.date(),
-    status: PaymentStatus,
+    paymentStatusEnum: PaymentStatus,
     amount: z.coerce.number().optional(),
     currencyId: z.string().uuid("Please select a currency").optional(),
 })
@@ -47,17 +47,6 @@ export type TOnboardingForm = {
     subscriptions: TSubscription[]
 }
 
-export type TCurrency = {
-    uuid: string
-    symbol: string
-    name: string
-    symbolNative: string
-    decimalDigits: number
-    rounding: string
-    code: string
-    namePlural: string
-}
-
 export const PrefabSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
@@ -69,14 +58,12 @@ export type TPrefab = z.infer<typeof PrefabSchema>
 export type TOnboardingState = {
     activePage: number
     selectedPrefabs: string[]
-    currencies: TCurrency[]
     prefabs: TPrefab[]
     selectedServiceId: string | null
 }
 
 export type TOnboardingActions = {
     setSelectedPrefabs: TSetterFunction<[string[]]>
-    setCurrencies: TSetterFunction<[]>
     setActivePage: TSetterFunction<[number]>
     setPrefabs: TSetterFunction<[]>
     setSelectedServiceId: TSetterFunction<[string]>
@@ -91,12 +78,6 @@ export const createOnboardingStore = () => {
 
         selectedPrefabs: [],
         setSelectedPrefabs: (values) => set({ selectedPrefabs: values }),
-
-        currencies: [],
-        setCurrencies: async () => {
-            const res = await fetchAllCurrencies()
-            if (res.data) set({ currencies: res.data })
-        },
 
         prefabs: [],
         setPrefabs: async () => {
