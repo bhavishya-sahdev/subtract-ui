@@ -19,7 +19,7 @@ export default function Index() {
             <div className="space-y-4 md:space-y-0 md:flex md:gap-4 py-4">
                 <Card className="bg-zinc-800">
                     <CardContent className="px-5 py-4 space-y-2">
-                        <p className="text-xl font-semibold">Your Spends This Month</p>
+                        <p className="text-lg font-semibold">Your Spends This Month</p>
                         <div>
                             <p className="text-2xl font-semibold">$421.89</p>
                             <p className="text-xs text-muted-foreground">(+$320 over last month)</p>
@@ -28,7 +28,7 @@ export default function Index() {
                 </Card>
                 <Card className="bg-zinc-800">
                     <CardContent className="px-5 py-4 space-y-2">
-                        <p className="text-xl font-semibold">Your Spends This Year</p>
+                        <p className="text-lg font-semibold">Your Spends This Year</p>
                         <div>
                             <p className="text-2xl font-semibold">$5421.89</p>
                             <p className="text-xs text-muted-foreground">(+$920 over last month)</p>
@@ -44,11 +44,10 @@ export default function Index() {
                             .filter((i, idx) => idx < 3)
                             .map((sub, index) => (
                                 <Card className="bg-zinc-800" key={index}>
-                                    <CardContent className="px-5 py-4 space-y-2">
-                                        <p className="text-xl font-semibold">{sub.name.toUpperCase()}</p>
+                                    <CardContent className="px-5 py-4 space-y-1">
+                                        <p>{sub.name.toUpperCase()}</p>
                                         <div>
-                                            <p className="text-2xl font-semibold">
-                                                {" "}
+                                            <p className="text-lg font-semibold">
                                                 {sub.currencyId && sub.currencyId === "USD" ? "$" : "₹"}
                                                 {sub.renewalAmount}
                                             </p>
