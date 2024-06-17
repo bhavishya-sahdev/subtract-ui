@@ -31,7 +31,7 @@ const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBar
     }
 
     return (
-        <Card className="box-border w-[300px] bg-[#0F0F0F]">
+        <Card className="box-border w-full bg-[#0F0F0F]">
             <CardContent className="p-3 space-y-2">
                 <Button
                     size="sm"
