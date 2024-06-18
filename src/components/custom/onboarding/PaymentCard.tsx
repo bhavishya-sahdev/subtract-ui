@@ -1,24 +1,15 @@
 "use client"
 
-import { TAxiosCurrencyDetails } from "@/lib/types"
-import { getCurrencyList } from "@/lib/utils"
+import { useRenderAmount } from "@/lib/utils"
+import { useUserStore } from "@/state/context/UserContext"
 import { TPayment } from "@/state/onboarding"
 import { format } from "date-fns"
 import { CircleAlert, CircleCheck, Info } from "lucide-react"
-import { useCallback, useMemo } from "react"
+import { useMemo } from "react"
 
 export default function PaymentCard({ date, amount, currencyId, paymentStatusEnum = "paid" }: TPayment) {
-    const currencies: TAxiosCurrencyDetails[] = getCurrencyList()
-
-    const renderAmount = useCallback(
-        (value: string, amount: number) => {
-            const c = currencies.find((c) => c.uuid === value)
-            if (!c) return ""
-
-            return new Intl.NumberFormat("en-US", { style: "currency", currency: c.code }).format(amount)
-        },
-        [currencies]
-    )
+    const currencies = useUserStore((state) => state.currencies)
+    const renderAmount = useRenderAmount(currencies)
 
     const renderVariantText = useMemo(() => {
         if (paymentStatusEnum === "paid") {
