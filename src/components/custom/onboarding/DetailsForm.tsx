@@ -22,7 +22,7 @@ import {
 } from "@/components/ui"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
-import { cn, generatePayments, getCurrencyList } from "@/lib/utils"
+import { cn, generatePayments } from "@/lib/utils"
 import { useCallback, useEffect, useState } from "react"
 import { renewalPeriodEnum, TOnboardingForm, TPayment } from "@/state/onboarding"
 import { useFormContext } from "react-hook-form"
@@ -30,6 +30,7 @@ import { z } from "zod"
 import { Minus, Plus } from "lucide-react"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import Payments from "./Payments"
+import { useUserStore } from "@/state/context/UserContext"
 
 export type TDetailsFormProps = {
     active: boolean
@@ -38,7 +39,7 @@ export type TDetailsFormProps = {
 
 export default function DetailsForm({ active = false, index }: TDetailsFormProps) {
     const { selectedServiceId } = useOnboardingStore((state) => state)
-    const currencies = getCurrencyList()
+    const currencies = useUserStore((state) => state.currencies)
     const { watch, ...form } = useFormContext<TOnboardingForm>()
 
     const [payments, setPayments] = useState<TPayment[]>([])
