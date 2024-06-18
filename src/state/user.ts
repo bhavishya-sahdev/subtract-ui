@@ -6,6 +6,7 @@ export type TUserState = {
     user: TAxiosUserDetails | null
     subscriptions: TAxiosUserDetails["subscriptions"]
     payments: TAxiosPaymentDetails[]
+    currencies: TAxiosCurrencyDetails[]
 }
 
 export type TUserActions = {
@@ -14,6 +15,7 @@ export type TUserActions = {
     fetchSubscriptions: () => Promise<void>
     setPayments: TSetterFunction<[TUserState["payments"]]>
     fetchPayments: () => Promise<void>
+    setCurrencies: TSetterFunction<[TUserState["currencies"]]>
 }
 
 export type TUserStore = TUserActions & TUserState
@@ -21,7 +23,8 @@ export type TUserStore = TUserActions & TUserState
 export const createUserStore = (
     initUser: TAxiosUserDetails | null = null,
     initSubscriptions: TAxiosUserDetails["subscriptions"] = [],
-    initPayments: TAxiosPaymentDetails[] = []
+    initPayments: TAxiosPaymentDetails[] = [],
+    initCurrencies: TAxiosCurrencyDetails[] = []
 ) => {
     return createStore<TUserStore>()((set) => ({
         user: initUser,
@@ -38,5 +41,8 @@ export const createUserStore = (
             // fetch payments
         },
         setPayments: (payments) => set({ payments }),
+
+        currencies: initCurrencies,
+        setCurrencies: (currencies) => set({ currencies }),
     }))
 }
