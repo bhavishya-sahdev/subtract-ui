@@ -1,4 +1,3 @@
-import { fetchAllCurrencies } from "@/lib/serverUtils"
 import { TAxiosCurrencyDetails, TAxiosPaymentDetails, TAxiosUserDetails, TSetterFunction } from "@/lib/types"
 import { createStore } from "zustand/vanilla"
 
