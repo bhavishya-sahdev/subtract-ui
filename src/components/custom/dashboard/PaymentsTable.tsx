@@ -25,84 +25,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui"
-import { ChevronDown, MoreHorizontal } from "lucide-react"
-import { getCurrencyList } from "@/lib/utils"
-import { TAxiosCurrencyDetails, TAxiosPaymentDetails } from "@/lib/types"
+import { MoreHorizontal } from "lucide-react"
+import { TAxiosPaymentDetails } from "@/lib/types"
 import { useState } from "react"
-
-const currencies: TAxiosCurrencyDetails[] = getCurrencyList()
-const renderAmount = (value: string, amount: number) => {
-    const c = currencies.find((c) => c.uuid === value)
-    if (!c) return ""
-
-    return new Intl.NumberFormat("en-US", { style: "currency", currency: c.code }).format(amount)
-}
-
-const columns: ColumnDef<TAxiosPaymentDetails>[] = [
-    {
-        header: "Id",
-        cell: ({ row }) => <span>{row.id}</span>,
-        enableSorting: true,
-        enableHiding: false,
-    },
-    {
-        header: "Payment Date",
-        accessorKey: "date",
-        cell: ({ row }) => <span>{format(new Date(row.getValue("date")), "MMMM dd, yyyy")}</span>,
-        enableSorting: true,
-        enableHiding: false,
-        enableResizing: true,
-    },
-    {
-        id: "amount",
-        header: () => <div className="text-right">Amount</div>,
-        cell: ({ row }) => {
-            const { currencyId, amount } = row.original
-            return <div className="text-right font-medium">{renderAmount(currencyId, amount)}</div>
-        },
-        enableSorting: true,
-        enableHiding: false,
-    },
-    {
-        header: "Status",
-        accessorKey: "paymentStatusEnum",
-        cell: ({ row }) => <span className="uppercase">{row.getValue("paymentStatusEnum")}</span>,
-        enableSorting: true,
-        enableHiding: false,
-    },
-
-    {
-        header: "Payment Method",
-        accessorKey: "paymentMethod",
-        cell: ({ row }) => <span>{row.getValue("paymentMethod") || "-"}</span>,
-        enableSorting: true,
-        enableHiding: false,
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const payment = row.original
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.uuid)}>
-                            Copy payment ID
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
-    },
-]
+import { useUserStore } from "@/state/context/UserContext"
+import { useRenderAmount } from "@/lib/utils"
 
 export type TPaymentTableProps = {
     payments: TAxiosPaymentDetails[]
@@ -113,6 +40,75 @@ export default function PaymentsTable({ payments }: TPaymentTableProps) {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
+    const currencies = useUserStore((state) => state.currencies)
+
+    const renderAmount = useRenderAmount(currencies)
+
+    const columns: ColumnDef<TAxiosPaymentDetails>[] = [
+        {
+            header: "Id",
+            cell: ({ row }) => <span>{row.id}</span>,
+            enableSorting: true,
+            enableHiding: false,
+        },
+        {
+            header: "Payment Date",
+            accessorKey: "date",
+            cell: ({ row }) => <span>{format(new Date(row.getValue("date")), "MMMM dd, yyyy")}</span>,
+            enableSorting: true,
+            enableHiding: false,
+            enableResizing: true,
+        },
+        {
+            id: "amount",
+            header: () => <div className="text-right">Amount</div>,
+            cell: ({ row }) => {
+                const { currencyId, amount } = row.original
+                return <div className="text-right font-medium">{renderAmount(currencyId, amount)}</div>
+            },
+            enableSorting: true,
+            enableHiding: false,
+        },
+        {
+            header: "Status",
+            accessorKey: "paymentStatusEnum",
+            cell: ({ row }) => <span className="uppercase">{row.getValue("paymentStatusEnum")}</span>,
+            enableSorting: true,
+            enableHiding: false,
+        },
+
+        {
+            header: "Payment Method",
+            accessorKey: "paymentMethod",
+            cell: ({ row }) => <span>{row.getValue("paymentMethod") || "-"}</span>,
+            enableSorting: true,
+            enableHiding: false,
+        },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+                const payment = row.original
+
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.uuid)}>
+                                Copy payment ID
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
+    ]
 
     const table = useReactTable({
         data: payments,
