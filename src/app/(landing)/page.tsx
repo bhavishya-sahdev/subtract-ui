@@ -5,7 +5,7 @@ export default function Home() {
     return (
         <>
             <section className="bg-gradient-to-b from-[#19191C] to-[#24242B] md:py-10">
-                <div className="max-w-screen-lg px-4 space-y-4 mx-auto pb-20 sm:space-y-8 md:space-y-12 sm:pb-44">
+                <div className="max-w-screen-lg px-4 space-y-4 mx-auto sm:space-y-8 md:space-y-12">
                     <div className="max-w-[800px] mx-auto">
                         <h1 className="text-2xl md:text-3xl font-bold pt-6 mb-1 sm:text-center">
                             Take Control of Your Subscriptions with Subtract
