@@ -3,8 +3,7 @@
 import PaymentsTable from "@/components/custom/dashboard/PaymentsTable"
 import SimpleCard from "@/components/custom/dashboard/SimpleCard"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui"
-import { TAxiosCurrencyDetails } from "@/lib/types"
-import { getCurrencyList } from "@/lib/utils"
+import { useRenderAmount } from "@/lib/utils"
 import { useUserStore } from "@/state/context/UserContext"
 import { TSubscription } from "@/state/onboarding"
 import { format } from "date-fns"
@@ -14,18 +13,10 @@ import { useCallback, useState } from "react"
 export default function Subscriptions() {
     const user = useUserStore((state) => state.user)
     const payments = useUserStore((state) => state.payments)
+    const currencies = useUserStore((state) => state.currencies)
     const [selectedSubscription, setSelectedSubscription] = useState(user?.subscriptions[0])
 
-    const [currencies] = useState<TAxiosCurrencyDetails[]>(getCurrencyList())
-    const renderAmount = useCallback(
-        (value: string, amount: number) => {
-            const c = currencies.find((c) => c.uuid === value)
-            if (!c) return ""
-
-            return new Intl.NumberFormat("en-US", { style: "currency", currency: c.code }).format(amount)
-        },
-        [currencies]
-    )
+    const renderAmount = useRenderAmount(currencies)
 
     const getTotalAmountForYear = useCallback(
         (subscription: TSubscription) => {
