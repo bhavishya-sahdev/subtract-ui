@@ -8,6 +8,7 @@ import { z } from "zod"
 import { client } from "./axiosClient"
 import api from "./api"
 import { fetchAllCurrencies } from "./serverUtils"
+import { useCallback } from "react"
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -135,9 +136,14 @@ export const setCurrencyList = async () => {
     }
 }
 
-export const getCurrencyList = (): TAxiosCurrencyDetails[] => {
-    if (typeof window === "undefined") return []
-    const currencies = window.localStorage.getItem("currencies")
-    if (!currencies) return []
-    return JSON.parse(currencies)
+export const useRenderAmount = (currencies: TAxiosCurrencyDetails[]) => {
+    return useCallback(
+        (value: string, amount: number) => {
+            const c = currencies.find((c) => c.uuid === value)
+            if (!c) return ""
+
+            return new Intl.NumberFormat("en-US", { style: "currency", currency: c.code }).format(amount)
+        },
+        [currencies]
+    )
 }
