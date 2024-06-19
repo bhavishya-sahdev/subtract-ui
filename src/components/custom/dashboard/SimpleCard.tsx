@@ -7,7 +7,7 @@ export default function SimpleCard({ title, description }: TSimpleCartProps) {
     return (
         <div>
             <p className="text-muted-foreground capitalize">{title}</p>
-            <p className="text-lg font-semibold">{description}</p>
+            <p className="text-lg font-semibold capitalize">{description}</p>
         </div>
     )
 }
