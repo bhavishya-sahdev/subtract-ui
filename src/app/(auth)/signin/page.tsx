@@ -55,9 +55,17 @@ export default function LoginForm() {
     const [inProgress, setInProgress] = useState(false)
 
     const handleGoogleSignup = useGoogleLogin({
+        onSuccess: async (res) => {
+            const { data } = await client.post(api.auth.google, {
+                code: res.code,
+            })
+
+            if (data.error !== null) return push(routes.DEFAULT)
+
+            const user = await fetchUserDetails()
+            setUser(user.data)
+        },
         flow: "auth-code",
-        redirect_uri: "http://localhost:5173/callback",
-        ux_mode: "redirect",
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
