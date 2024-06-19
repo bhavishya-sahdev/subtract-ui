@@ -1,22 +1,28 @@
 "use client"
 
 import Link from "next/link"
-
 import { routes } from "@/lib/routes"
 import { Button } from "@/components/ui/button"
 import { useUserStore } from "@/state/context/UserContext"
 import { Separator, Sheet, SheetContent, SheetTrigger } from "@/components/ui"
 import { Menu } from "lucide-react"
 import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 
 const LandingNav = () => {
     const user = useUserStore((state) => state.user)
+    const pathname = usePathname()
+    const router = useRouter()
+
     const [isSheetOpen, setIsSheetOpen] = useState(false)
 
     const handleClick = (id: string) => (event: React.MouseEvent) => {
         event.preventDefault()
-        console.log(id)
+        if (pathname !== routes.DEFAULT) {
+            router.push(`${routes.DEFAULT}/#${id}`)
+        }
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" })
+        setIsSheetOpen(false)
     }
 
     return (
@@ -27,6 +33,7 @@ const LandingNav = () => {
                         Subtract
                     </Button>
                 </Link>
+
                 <div className="hidden sm:block">
                     <Button variant="link" onClick={handleClick("about")} className="text-foreground justify-start">
                         About
