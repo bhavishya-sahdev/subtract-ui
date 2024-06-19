@@ -2,6 +2,7 @@ const api = {
     auth: {
         signup: "/auth/signup",
         signin: "/auth/signin",
+        google: "/auth/google",
     },
     user: {
         getDetails: "/user",
