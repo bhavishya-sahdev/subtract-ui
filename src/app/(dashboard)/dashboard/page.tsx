@@ -24,19 +24,19 @@ export default function Index() {
         <div>
             <div className="space-y-4 md:space-y-0 md:flex md:gap-4 py-4">
                 <Card className="bg-zinc-800">
-                    <CardContent className="px-5 py-4 space-y-2">
-                        <p className="text-lg">Your Spends This Month</p>
+                    <CardContent className="px-5 py-4 spacy-y-2">
+                        <p className="text-muted-foreground">Your Spends This Month</p>
                         <div>
-                            <p className="text-2xl font-semibold">$421.89</p>
+                            <p className="text-xl font-semibold">$421.89</p>
                             <p className="text-xs text-muted-foreground">(+$320 over last month)</p>
                         </div>
                     </CardContent>
                 </Card>
                 <Card className="bg-zinc-800">
-                    <CardContent className="px-5 py-4 space-y-2">
-                        <p className="text-lg">Your Spends This Year</p>
+                    <CardContent className="px-5 py-4 spacy-y-2">
+                        <p className="text-muted-foreground">Your Spends This Year</p>
                         <div>
-                            <p className="text-2xl font-semibold">$5421.89</p>
+                            <p className="text-xl font-semibold">$5421.89</p>
                             <p className="text-xs text-muted-foreground">(+$920 over last month)</p>
                         </div>
                     </CardContent>
@@ -84,23 +84,23 @@ export default function Index() {
                         <p className="text-xl font-semibold">Actions</p>
 
                         <div>
-                            <div className="grid md:grid-cols-2 gap-2">
-                                <Button className="h-[100px] w-full" variant="secondary">
+                            <div className="grid md:grid-cols-2 gap-2 [&>button]:w-full [&>button]:h-[100px] [&>button]:flex-col [&>button]:gap-1">
+                                <Button variant="secondary">
                                     <Plus className="mr-2 h-5 w-5" />
                                     Add Subscription
                                 </Button>
                                 {/* sync emails */}
-                                <Button className="h-[100px] w-full" variant="secondary">
+                                <Button variant="secondary">
                                     <Mail className="mr-2 h-5 w-5" />
                                     Sync Emails
                                 </Button>
-                                <Button className="h-[100px] w-full" variant="secondary">
+                                <Button variant="secondary">
                                     <RotateCw className="mr-2 h-5 w-5" />
                                     Refresh
                                 </Button>
-                                <Button className="h-[100px] w-full" variant="secondary">
+                                <Button variant="secondary">
                                     <X className="mr-2 h-5 w-5" />
-                                    Remove Subscription
+                                    <p>Remove Subscription</p>
                                 </Button>
                             </div>
                         </div>
