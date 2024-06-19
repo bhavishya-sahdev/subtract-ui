@@ -9,8 +9,8 @@ export default async function AuthLayout({
         <div className="h-full flex flex-col">
             <LandingNav />
 
-            <div className="h-full flex md:items-center justify-center bg-gradient-to-b from-[#19191C] to-[#24242B]">
-                <div>{children}</div>
+            <div className="h-full w-full flex md:items-center justify-center bg-gradient-to-b from-[#19191C] to-[#24242B]">
+                {children}
             </div>
         </div>
     )
