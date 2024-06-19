@@ -17,6 +17,8 @@ import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 import { useUserStore } from "@/state/context/UserContext"
+import { Separator } from "@/components/ui"
+import { useGoogleLogin } from "@react-oauth/google"
 
 const FormSchema = z.object({
     email: z.string(),
@@ -51,6 +53,12 @@ export default function LoginForm() {
     })
 
     const [inProgress, setInProgress] = useState(false)
+
+    const handleGoogleSignup = useGoogleLogin({
+        flow: "auth-code",
+        redirect_uri: "http://localhost:5173/callback",
+        ux_mode: "redirect",
+    })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
         try {
@@ -95,6 +103,16 @@ export default function LoginForm() {
         <div className="w-full max-w-sm p-4">
             <p className="text-3xl font-semibold mb-1">Login</p>
             <p className="mb-8 text-muted-foreground">Enter your email below to login to your account.</p>
+
+            <Button className="w-full mb-4" variant="secondary" onClick={handleGoogleSignup}>
+                Continue with Google
+            </Button>
+
+            <div className="text-center text-muted-foreground flex items-center gap-2 my-4">
+                <Separator className="bg-muted-foreground shrink" />
+                <span>OR</span>
+                <Separator className="bg-muted-foreground shrink" />
+            </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="block">
                     <div className="grid gap-2">
