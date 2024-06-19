@@ -7,6 +7,7 @@ import { UserStoreProvider } from "@/state/context/UserContext"
 import { headers } from "next/headers"
 import { routes } from "@/lib/routes"
 import { redirect } from "next/navigation"
+import { GoogleOAuthProvider } from "@react-oauth/google"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -45,14 +46,16 @@ export default async function RootLayout({
     return (
         <html lang="en" className="dark">
             <body className={inter.className}>
-                <UserStoreProvider
-                    user={user ? user : null}
-                    subscriptions={user ? user.subscriptions : []}
-                    payments={payments || []}
-                    currencies={currencies || []}
-                >
-                    {children}
-                </UserStoreProvider>
+                <GoogleOAuthProvider clientId="1072052271469-1bhh7lq5vla9atblmpe5kir8l9j4kc8o.apps.googleusercontent.com">
+                    <UserStoreProvider
+                        user={user ? user : null}
+                        subscriptions={user ? user.subscriptions : []}
+                        payments={payments || []}
+                        currencies={currencies || []}
+                    >
+                        {children}
+                    </UserStoreProvider>
+                </GoogleOAuthProvider>
                 <Toaster />
             </body>
         </html>
