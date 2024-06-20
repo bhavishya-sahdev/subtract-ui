@@ -30,7 +30,7 @@ export default async function RootLayout({
 
     if (user === null) {
         // redirect to homepage when trying to access protected pages when not logged in
-        if (header_url.startsWith("/dashboard/") || header_url.startsWith("/onboarding")) redirect(routes.DEFAULT)
+        if (header_url.startsWith("/dashboard") || header_url.startsWith("/onboarding")) redirect(routes.DEFAULT)
     } else {
         // redirect to dashboard while accessing auth pages when logged in
         if (header_url.startsWith("/signin") || header_url.startsWith("/signup")) redirect(routes.dashboard.DEFAULT)
