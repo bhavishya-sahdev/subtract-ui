@@ -42,7 +42,7 @@ export default function Index() {
                     </CardContent>
                 </Card>
             </div>
-            <div className="py-4 space-y-8 md:space-y-0 md:grid md:grid-cols-[minmax(200px,1fr)_1fr] lg:grid-cols-[minmax(200px,1fr)_1.5fr_minmax(200px,1fr)] sm:gap-x-4 lg:gap-x-6">
+            <div className="py-4 space-y-8 md:space-y-4 md:grid md:grid-cols-[minmax(200px,1fr)_1fr] lg:space-y-0 lg:grid-cols-[minmax(200px,1fr)_1.5fr_minmax(200px,1fr)] sm:gap-x-4 lg:gap-x-6">
                 <div className="space-y-3">
                     <p className="text-xl font-semibold">Your Subscriptions</p>
                     <div className="space-y-4">
