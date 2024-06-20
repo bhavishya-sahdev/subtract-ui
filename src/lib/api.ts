@@ -1,3 +1,5 @@
+import { read } from "fs"
+
 const api = {
     auth: {
         signup: "/auth/signup",
@@ -9,6 +11,8 @@ const api = {
         getSubscriptions: "/user/subscriptions",
         getPayments: "/user/payments",
         updateOnboardingStatus: "/user/update-onboarding-status",
+        mailAccess: "/user/google/access",
+        readMails: "/user/google/mails",
     },
     subscription: {
         create: "/subscription",
