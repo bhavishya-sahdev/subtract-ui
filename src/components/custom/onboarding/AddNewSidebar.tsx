@@ -3,14 +3,15 @@ import { cn, initiateNewSubscription } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import { TOnboardingForm, TSubscription } from "@/state/onboarding"
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
-import { PlusCircle, Trash2 } from "lucide-react"
+import { Mail, PlusCircle, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
 export type TAddNewTopBarProps = {
     fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
+    handleSyncWithEmail: () => void
 }
 
-const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBarProps) => {
+const AddNewTopBar = ({ fieldArray: { remove, prepend, fields }, handleSyncWithEmail }: TAddNewTopBarProps) => {
     const { setSelectedServiceId, selectedServiceId, selectedPrefabs, setSelectedPrefabs } = useOnboardingStore(
         (state) => state
     )
@@ -42,6 +43,15 @@ const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBar
                     }}
                 >
                     <PlusCircle className="stroke-1 w-5 h-5" /> <p>Add new</p>
+                </Button>
+
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="space-x-2 w-full justify-start"
+                    onClick={handleSyncWithEmail}
+                >
+                    <Mail className="stroke-1 w-5 h-5" /> <p>Import from email</p>
                 </Button>
 
                 <Separator />
