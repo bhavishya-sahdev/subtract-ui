@@ -66,6 +66,7 @@ export default function LoginForm() {
             setUser(user.data)
         },
         flow: "auth-code",
+        scope: "email profile",
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
