@@ -35,6 +35,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-oauth/google": "^0.12.1",
     "@tanstack/react-table": "^8.17.3",
+    "@vercel/speed-insights": "^1.0.12",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
