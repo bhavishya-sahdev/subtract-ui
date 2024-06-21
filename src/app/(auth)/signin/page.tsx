@@ -28,6 +28,7 @@ export default function LoginForm() {
     const { toast } = useToast()
     const { push } = useRouter()
     const setUser = useUserStore((state) => state.setUser)
+    const setSubsciptions = useUserStore((state) => state.setSubscriptions)
     const setPayments = useUserStore((state) => state.setPayments)
     const user = useUserStore((state) => state.user)
 
@@ -38,6 +39,7 @@ export default function LoginForm() {
             ;(async () => {
                 const { data: payments } = await fetchUserPayments()
                 if (payments) setPayments(payments)
+                if (user.subscriptions) setSubsciptions(user.subscriptions)
                 push(user.isOnboardingComplete ? routes.dashboard.overview : routes.dashboard.onboarding)
             })()
         }
