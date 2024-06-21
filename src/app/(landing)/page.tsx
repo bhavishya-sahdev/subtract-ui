@@ -1,5 +1,15 @@
 import { Button, Input } from "@/components/ui"
-import { BellOff, Calendar, CirclePercent, Folders, LineChart, ListTodo, Telescope, Users } from "lucide-react"
+import {
+    BellOff,
+    Calendar,
+    CirclePercent,
+    DiamondPlus,
+    Folders,
+    LineChart,
+    ListTodo,
+    Telescope,
+    Users,
+} from "lucide-react"
 
 export default function Home() {
     return (
@@ -51,96 +61,99 @@ export default function Home() {
                         <h2 className="text-2xl font-semibold">Features</h2>
                     </div>
 
-                    <div className="flex gap-4 overflow-scroll scrollbar-hide [&>div]:bg-[#2F2F38] [&>div]:p-4 [&>div]:border [&>div]:rounded [&>div]:space-y-4 [&>div]:min-w-[300px]">
-                        <div>
-                            <CirclePercent size={36} className="stroke-zinc-300" />
+                    <div className="grid md:grid-cols-4 md:[grid-template-areas:'main_main_side1_side2''side7_side7_side3_side3''side4_side5_side5_side6'] [&>div]:border [&>div]:border-zinc-600 [&>div]:p-8 [&>div]:space-y-3">
+                        <div className="[grid-area:main]">
+                            {/* <CirclePercent size={36} className="stroke-zinc-300 shrink-0" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Budget Tracking</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground">
                                     Never go over budget again. Set custom limits and get alerts when you&apos;re
                                     approaching them.
                                 </p>
                             </div>
+                            <Button
+                                variant="outline"
+                                className="gap-2 bg-transparent border-zinc-700 text-primary hover:text-muted hover:bg-primary"
+                            >
+                                <DiamondPlus /> Learn More
+                            </Button>
                         </div>
 
-                        <div>
-                            <Folders size={36} className="stroke-zinc-300" />
+                        <div className="[grid-area:side1]">
+                            {/* <Folders size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Subscription Categories</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground ">
                                     Easily organize subscriptions into categories like streaming, productivity, and
                                     lifestyle.
                                 </p>
                             </div>
                         </div>
 
-                        <div>
-                            <ListTodo size={36} className="stroke-zinc-300" />
+                        <div className="[grid-area:side2]">
+                            {/* <ListTodo size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Subscription Auditing</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground ">
                                     Subtract will prompt you to review and cancel any subscriptions you&apos;re no
                                     longer using.
                                 </p>
                             </div>
                         </div>
 
-                        <div>
-                            <Users size={36} className="stroke-zinc-300" />
+                        <div className="[grid-area:side3]">
+                            {/* <Users size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Family Sharing</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground ">
                                     Share subscription details seamlessly with family members on your plan.
                                 </p>
                             </div>
                         </div>
 
-                        <div>
-                            <BellOff size={36} className="stroke-zinc-300" />
+                        <div className="[grid-area:side4]">
+                            {/* <BellOff size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Snooze Renewals</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground ">
                                     Need a break? Snooze any subscription to temporarily pause renewals.
                                 </p>
                             </div>
                         </div>
 
-                        <div>
-                            <Calendar size={36} className="stroke-zinc-300" />
+                        <div className="[grid-area:side5]">
+                            {/* <Calendar size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Calendar Integration</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground ">
                                     View all your upcoming subscription renewals and billing dates in your calendar.
                                 </p>
                             </div>
                         </div>
 
-                        <div>
-                            <Telescope size={36} className="stroke-zinc-300" />
+                        <div className="[grid-area:side6]">
+                            {/* <Telescope size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Discovery Feed</h3>
-                                <p className="text-zinc-300">
+                                <p className="text-muted-foreground ">
                                     Find new apps and services based on what others with similar interests are
                                     subscribing to.
                                 </p>
                             </div>
                         </div>
 
-                        <div>
-                            <LineChart size={36} className="stroke-zinc-300" />
-                            <div className="space-y-1">
-                                <h3 className="text-xl">Premium Analytics</h3>
-                                <p className="text-zinc-300">
-                                    Unlock valuable insights into your subscription spend, trends, and cost savings over
-                                    time.
-                                </p>
-                            </div>
+                        <div className="[grid-area:side7]">
+                            {/* <LineChart size={36} className="stroke-zinc-300" /> */}
+                            <h3 className="text-xl">Premium Analytics</h3>
+                            <p className="text-muted-foreground ">
+                                Unlock valuable insights into your subscription spend, trends, and cost savings over
+                                time.
+                            </p>
                         </div>
                     </div>
                 </div>
             </section>
-            {/* Pricing section */}
-            <section id="pricing" className=" sm:py-10 md:py-20">
+            {/* <section id="pricing" className=" sm:py-10 md:py-20">
                 <div className="max-w-screen-lg px-4 py-8 space-y-4 mx-auto">
                     <div className="space-y-1">
                         <h2 className="text-2xl font-semibold">Pricing</h2>
@@ -190,7 +203,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             {/* CTA section*/}
             <section className="bg-zinc-600 sm:py-10 md:py-20">
                 <div className="max-w-screen-lg px-4 py-8 space-y-4 mx-auto">
