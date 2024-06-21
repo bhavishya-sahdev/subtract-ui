@@ -41,10 +41,7 @@ export default function DashboardLayout({
                 <Link href={routes.dashboard.overview}>
                     <Button
                         tabIndex={-1}
-                        className={cn(
-                            "w-full text-muted-foreground p-0",
-                            identifyPage === "Overview" && "text-foreground"
-                        )}
+                        className={cn("w-full p-0 text-blue-400/60", identifyPage === "Overview" && " text-blue-400")}
                         variant="link"
                     >
                         Overview
@@ -54,8 +51,8 @@ export default function DashboardLayout({
                     <Button
                         tabIndex={-1}
                         className={cn(
-                            "w-full text-muted-foreground p-0",
-                            identifyPage === "Subscriptions" && "text-foreground"
+                            "w-full text-blue-400/60 p-0",
+                            identifyPage === "Subscriptions" && " text-blue-400"
                         )}
                         variant="link"
                     >
@@ -65,10 +62,7 @@ export default function DashboardLayout({
                 <Link href={routes.dashboard.payments}>
                     <Button
                         tabIndex={-1}
-                        className={cn(
-                            "w-full text-muted-foreground p-0",
-                            identifyPage === "Payments" && "text-foreground"
-                        )}
+                        className={cn("w-full text-blue-400/60 p-0", identifyPage === "Payments" && " text-blue-400")}
                         variant="link"
                     >
                         Payments
