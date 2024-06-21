@@ -32,6 +32,7 @@ export type TAxiosUserDetails = {
     isOnboardingComplete: boolean
     subscriptionCount: number
     paymentCount: number
+    isGoogleUser: boolean
     subscriptions: TSubscription[]
 }
 
