@@ -3,7 +3,14 @@ import { type ClassValue, clsx } from "clsx"
 import { add, addDays, addMonths, addYears } from "date-fns"
 import { twMerge } from "tailwind-merge"
 import { v4 as uuid } from "uuid"
-import { TAxiosCurrencyDetails, TAxiosErrorResponse, TAxiosSuccessResponse, TAxiosUserDetails, TError } from "./types"
+import {
+    TAxiosCurrencyDetails,
+    TAxiosErrorResponse,
+    TAxiosPaymentDetails,
+    TAxiosSuccessResponse,
+    TAxiosUserDetails,
+    TError,
+} from "./types"
 import { z } from "zod"
 import { client } from "./axiosClient"
 import api from "./api"
@@ -48,6 +55,48 @@ export const updateUserOnboardingStatus = async (): Promise<
         return {
             data: null,
             error: { message: "Failed to update onboarding status" },
+        }
+    }
+}
+
+export const fetchUserDetails = async (): Promise<
+    TAxiosSuccessResponse<TAxiosUserDetails> | TAxiosErrorResponse<{ message: string }>
+> => {
+    try {
+        const res = await client.get(api.user.getSubscriptions)
+        return res.data
+    } catch (error) {
+        return {
+            data: null,
+            error: { message: "Failed to load user data" },
+        }
+    }
+}
+
+export const fetchUserSubscriptions = async () => {
+    try {
+        const res = await client.get(api.user.getSubscriptions)
+
+        return res.data
+    } catch (error) {
+        return {
+            data: null,
+            error: { message: "Failed to load subscription data" },
+        }
+    }
+}
+
+export const fetchUserPayments = async (): Promise<
+    TAxiosSuccessResponse<TAxiosPaymentDetails[]> | TAxiosErrorResponse<{ message: string }>
+> => {
+    try {
+        const res = await client.get(api.user.getPayments)
+
+        return res.data
+    } catch (error) {
+        return {
+            data: null,
+            error: { message: "Failed to load payment data" },
         }
     }
 }
