@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui"
 
 import { format } from "date-fns"
 import { useRenderAmount } from "@/lib/utils"
+import Link from "next/link"
+import { routes } from "@/lib/routes"
 
 export default function Index() {
     const user = useUserStore((state) => state.user)
@@ -45,10 +47,10 @@ export default function Index() {
             <div className="py-4 space-y-8 md:space-y-4 md:grid md:grid-cols-[minmax(200px,1fr)_1fr] lg:space-y-0 lg:grid-cols-[minmax(200px,1fr)_1.5fr_minmax(200px,1fr)] sm:gap-x-4 lg:gap-x-6">
                 <div className="space-y-3">
                     <p className="text-xl font-semibold">Your Subscriptions</p>
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                         {user.subscriptions.length > 0 ? (
                             user.subscriptions
-                                .filter((i, idx) => idx < 3)
+                                .filter((_i, idx) => idx < 3)
                                 .map((sub, index) => (
                                     <Card className="bg-zinc-800" key={index}>
                                         <CardContent className="px-5 py-4 space-y-1">
@@ -73,7 +75,9 @@ export default function Index() {
                         )}
                     </div>
                     <div>
-                        <button className="text-primary">View All</button>
+                        <Link href={routes.dashboard.subscriptions}>
+                            <button className="text-primary">View All</button>
+                        </Link>
                     </div>
                 </div>
                 <Separator className="md:hidden" />
@@ -142,7 +146,9 @@ export default function Index() {
                         </Card>
                     </div>
                     <div>
-                        <button className="text-primary">View All</button>
+                        <Link href={routes.dashboard.payments}>
+                            <button className="text-primary">View All</button>
+                        </Link>
                     </div>
                 </div>
             </div>
