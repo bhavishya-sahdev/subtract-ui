@@ -12,9 +12,10 @@ import { useCallback, useState } from "react"
 
 export default function Subscriptions() {
     const user = useUserStore((state) => state.user)
+    const subscriptions = useUserStore((state) => state.subscriptions)
     const payments = useUserStore((state) => state.payments)
     const currencies = useUserStore((state) => state.currencies)
-    const [selectedSubscription, setSelectedSubscription] = useState(user?.subscriptions[0])
+    const [selectedSubscription, setSelectedSubscription] = useState(subscriptions.length > 0 ? subscriptions[0] : null)
 
     const renderAmount = useRenderAmount(currencies)
 
@@ -56,7 +57,7 @@ export default function Subscriptions() {
         <div className="space-y-4 h-full py-4 md:space-y-0 md:grid md:grid-cols-[minmax(200px,0.25fr)_1fr] md:gap-4">
             {/* sidebar */}
             <div className="w-full h-max max-h-[320px] rounded-lg overflow-y-auto bg-zinc-800">
-                {user.subscriptions.map((subscription) => (
+                {subscriptions.map((subscription) => (
                     <Button
                         key={subscription.uuid}
                         variant="ghost"
