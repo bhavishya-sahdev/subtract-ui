@@ -61,8 +61,8 @@ export default function Home() {
                         <h2 className="text-2xl font-semibold">Features</h2>
                     </div>
 
-                    <div className="grid md:grid-cols-4 md:[grid-template-areas:'main_main_side1_side2''side7_side7_side3_side3''side4_side5_side5_side6'] [&>div]:border [&>div]:border-zinc-600 [&>div]:p-8 [&>div]:space-y-3">
-                        <div className="[grid-area:main]">
+                    <div className="grid grid-cols-1 md:grid-cols-4 border border-zinc-600 md:[grid-template-areas:'main_main_side1_side2''side7_side7_side3_side3''side4_side5_side5_side6'] [&>div]:border-zinc-600 [&>div]:p-8 [&>div]:space-y-3">
+                        <div className="md:[grid-area:main] md:border-r border-b">
                             {/* <CirclePercent size={36} className="stroke-zinc-300 shrink-0" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Budget Tracking</h3>
@@ -79,7 +79,7 @@ export default function Home() {
                             </Button>
                         </div>
 
-                        <div className="[grid-area:side1]">
+                        <div className="md:[grid-area:side1] md:border-r border-b ">
                             {/* <Folders size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Subscription Categories</h3>
@@ -90,7 +90,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="[grid-area:side2]">
+                        <div className="md:[grid-area:side2] border-b">
                             {/* <ListTodo size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Subscription Auditing</h3>
@@ -101,7 +101,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="[grid-area:side3]">
+                        <div className="md:[grid-area:side3] border-b">
                             {/* <Users size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Family Sharing</h3>
@@ -111,7 +111,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="[grid-area:side4]">
+                        <div className="md:[grid-area:side4] md:border-r border-b md:border-b-0">
                             {/* <BellOff size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Snooze Renewals</h3>
@@ -121,7 +121,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="[grid-area:side5]">
+                        <div className="md:[grid-area:side5] md:border-r border-b md:border-b-0">
                             {/* <Calendar size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Calendar Integration</h3>
@@ -131,7 +131,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="[grid-area:side6]">
+                        <div className="md:[grid-area:side6] border-b md:border-b-0">
                             {/* <Telescope size={36} className="stroke-zinc-300" /> */}
                             <div className="space-y-1">
                                 <h3 className="text-xl">Discovery Feed</h3>
@@ -142,7 +142,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="[grid-area:side7]">
+                        <div className="md:[grid-area:side7] md:border-r md:border-b">
                             {/* <LineChart size={36} className="stroke-zinc-300" /> */}
                             <h3 className="text-xl">Premium Analytics</h3>
                             <p className="text-muted-foreground ">
