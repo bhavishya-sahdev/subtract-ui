@@ -1,5 +1,3 @@
-import { read } from "fs"
-
 const api = {
     auth: {
         signup: "/auth/signup",
@@ -17,6 +15,7 @@ const api = {
     subscription: {
         create: "/subscription",
         createWithPayments: "/subscription/payments",
+        remove: (id: string) => `/subscription/${id}/delete`,
     },
     utils: {
         currency: "/currency",
