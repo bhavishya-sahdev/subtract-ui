@@ -19,6 +19,7 @@ import { client } from "@/lib/axiosClient"
 import api from "@/lib/api"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { useGoogleLogin } from "@react-oauth/google"
+import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 
 export type TAddDetailsProps = {
     fieldArray: ReturnType<typeof useFieldArray<TOnboardingForm>>
@@ -26,7 +27,7 @@ export type TAddDetailsProps = {
 
 export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { selectedServiceId, setActivePage } = useOnboardingStore((state) => state)
-    const { setUser, user } = useUserStore((state) => state)
+    const { setUser, user, setPayments } = useUserStore((state) => state)
     const { toast } = useToast()
     const { getValues } = useFormContext<TOnboardingForm>()
     const { fields } = fieldArray
@@ -62,13 +63,18 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     }
 
     const handleSyncWithEmail = async () => {
+        if (!user) return
         try {
-            const res = await client.get(api.user.mailAccess)
-            if (res.data.error !== null) {
-                if ("code" in res.data.error && res.data.error.code === "G-403") {
-                    setOpenDialog(true)
+            if (user.isGoogleUser) {
+                const res = await client.get(api.user.mailAccess)
+                if (res.data.error !== null) {
+                    if ("code" in res.data.error && res.data.error.code === "G-403") {
+                        setOpenDialog(true)
+                    }
+                    return
                 }
-                return
+            } else {
+                handleGoogleAuth()
             }
             proceedWithSync()
         } catch (e: any) {
@@ -94,10 +100,18 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
             })
 
             if (res.data !== null) {
-                toast({ title: "Subscriptions created successfully" })
                 const onboardingStatusRes = await updateUserOnboardingStatus()
+                const updatedUser = await fetchUserDetails()
+                const payments = await fetchUserPayments()
+                if (updatedUser.data === null || payments.data === null)
+                    return toast({
+                        title: "An error occured while fetching user details. Please try refreshing the page",
+                    })
+
+                toast({ title: "Onboarding complete" })
                 if (onboardingStatusRes.data !== null) {
-                    if (user) setUser({ ...user, isOnboardingComplete: true })
+                    setUser(updatedUser.data)
+                    setPayments(payments.data)
                     push(routes.dashboard.overview)
                 }
             } else {
