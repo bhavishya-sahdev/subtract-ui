@@ -52,6 +52,21 @@ export const updateUserOnboardingStatus = async (): Promise<
     }
 }
 
+export const removeSubscription = async (
+    subscriptionId: string
+): Promise<TAxiosSuccessResponse<null> | TAxiosErrorResponse<TError>> => {
+    try {
+        const res = await client.post(api.subscription.remove(subscriptionId))
+        if (res.data.error) return { data: null, error: res.data.error }
+        return { data: res.data, error: null }
+    } catch (error) {
+        return {
+            data: null,
+            error: { message: "Failed to remove subscription" },
+        }
+    }
+}
+
 export function generatePayments({
     creationDate,
     renewalPeriodEnum,
