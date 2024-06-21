@@ -27,7 +27,7 @@ export type TAddDetailsProps = {
 
 export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { selectedServiceId, setActivePage } = useOnboardingStore((state) => state)
-    const { setUser, user, setPayments } = useUserStore((state) => state)
+    const { setUser, user, setPayments, setSubscriptions } = useUserStore((state) => state)
     const { toast } = useToast()
     const { getValues } = useFormContext<TOnboardingForm>()
     const { fields } = fieldArray
@@ -112,6 +112,7 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                 if (onboardingStatusRes.data !== null) {
                     setUser(updatedUser.data)
                     setPayments(payments.data)
+                    setSubscriptions(updatedUser.data.subscriptions)
                     push(routes.dashboard.overview)
                 }
             } else {
