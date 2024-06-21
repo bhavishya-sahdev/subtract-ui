@@ -11,16 +11,16 @@ import { format } from "date-fns"
 import { useRenderAmount } from "@/lib/utils"
 import Link from "next/link"
 import { routes } from "@/lib/routes"
+import AddSubscriptionModal from "@/components/custom/AddSubscriptionModal"
+import RemoveSubscriptionModal from "@/components/custom/RemoveSubscriptionModal"
 
-export default function Index() {
-    const user = useUserStore((state) => state.user)
+export default function Dashboard() {
+    const subscriptions = useUserStore((state) => state.subscriptions)
     const payments = useUserStore((state) => state.payments)
 
     const currencies = useUserStore((state) => state.currencies)
 
     const renderAmount = useRenderAmount(currencies)
-
-    if (!user) return
 
     return (
         <div>
@@ -48,8 +48,8 @@ export default function Index() {
                 <div className="space-y-3">
                     <p className="text-xl font-semibold">Your Subscriptions</p>
                     <div className="space-y-2">
-                        {user.subscriptions.length > 0 ? (
-                            user.subscriptions
+                        {subscriptions.length > 0 ? (
+                            subscriptions
                                 .filter((_i, idx) => idx < 3)
                                 .map((sub, index) => (
                                     <Card className="bg-zinc-800" key={index}>
@@ -89,10 +89,13 @@ export default function Index() {
 
                         <div>
                             <div className="grid md:grid-cols-2 gap-2 [&>button]:w-full [&>button]:h-[100px] [&>button]:flex-col [&>button]:gap-1">
-                                <Button variant="secondary">
-                                    <Plus className="mr-2 h-5 w-5" />
-                                    Add Subscription
-                                </Button>
+                                <AddSubscriptionModal>
+                                    <Button variant="secondary">
+                                        <Plus className="mr-2 h-5 w-5" />
+                                        Add Subscription
+                                    </Button>
+                                </AddSubscriptionModal>
+
                                 {/* sync emails */}
                                 <Button variant="secondary">
                                     <Mail className="mr-2 h-5 w-5" />
@@ -102,10 +105,12 @@ export default function Index() {
                                     <RotateCw className="mr-2 h-5 w-5" />
                                     Refresh
                                 </Button>
-                                <Button variant="secondary">
-                                    <X className="mr-2 h-5 w-5" />
-                                    <p>Remove Subscription</p>
-                                </Button>
+                                <RemoveSubscriptionModal>
+                                    <Button variant="secondary">
+                                        <X className="mr-2 h-5 w-5" />
+                                        <p>Remove Subscription</p>
+                                    </Button>
+                                </RemoveSubscriptionModal>
                             </div>
                         </div>
                     </div>
@@ -127,9 +132,8 @@ export default function Index() {
                                             <div key={index}>
                                                 {/* get subscription name */}
                                                 <p className="capitalize font-semibold">
-                                                    {user.subscriptions.find(
-                                                        (sub) => sub.uuid === payment.subscriptionId
-                                                    )?.name || "Unknown"}
+                                                    {subscriptions.find((sub) => sub.uuid === payment.subscriptionId)
+                                                        ?.name || "Unknown"}
                                                 </p>
                                                 <p className="text-sm ">
                                                     {renderAmount(payment.currencyId, payment.amount)}{" "}
