@@ -1,22 +1,30 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Input } from "@/components/ui/input"
 import { routes } from "@/lib/routes"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { client } from "@/lib/axiosClient"
 import api from "@/lib/api"
-import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { fetchUserDetails } from "@/lib/serverUtils"
+import { fetchUserDetails } from "@/lib/utils"
 import { useUserStore } from "@/state/context/UserContext"
-import { Separator } from "@/components/ui"
+import {
+    Button,
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input,
+    Separator,
+    useToast,
+} from "@/components/ui"
 import { useGoogleLogin } from "@react-oauth/google"
 
 const FormSchema = z.object({

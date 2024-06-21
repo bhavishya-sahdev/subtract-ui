@@ -2,13 +2,14 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
-import { fetchAllCurrencies, fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
+import { fetchAllCurrencies } from "@/lib/serverUtils"
 import { UserStoreProvider } from "@/state/context/UserContext"
 import { headers } from "next/headers"
 import { routes } from "@/lib/routes"
 import { redirect } from "next/navigation"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { fetchUserDetails, fetchUserPayments } from "@/lib/utils"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
