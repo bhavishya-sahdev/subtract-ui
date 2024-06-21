@@ -3,7 +3,7 @@
 import PaymentsTable from "@/components/custom/dashboard/PaymentsTable"
 import SimpleCard from "@/components/custom/dashboard/SimpleCard"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui"
-import { useRenderAmount } from "@/lib/utils"
+import { cn, useRenderAmount } from "@/lib/utils"
 import { useUserStore } from "@/state/context/UserContext"
 import { TSubscription } from "@/state/onboarding"
 import { format } from "date-fns"
@@ -60,10 +60,13 @@ export default function Subscriptions() {
                     <Button
                         key={subscription.uuid}
                         variant="ghost"
-                        className="rounded-none w-full justify-between capitalize"
+                        className={cn(
+                            "rounded-none w-full justify-between capitalize",
+                            selectedSubscription?.uuid === subscription.uuid && "bg-accent/60"
+                        )}
                         onClick={() => setSelectedSubscription(subscription)}
                     >
-                        {subscription.name} <ArrowRight size={20} />
+                        {subscription.name} <ArrowRight size={20} className="stroke-blue-400" />
                     </Button>
                 ))}
             </div>
@@ -76,7 +79,7 @@ export default function Subscriptions() {
                             <div className="p-1.5 h-max bg-green-500 rounded-full"></div>
                             <p className="font-semibold text-xl">{selectedSubscription.name}</p>
                         </div>
-                        <div className="md:hidden">
+                        <div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon">
@@ -85,26 +88,15 @@ export default function Subscriptions() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="space-y-2" align="end">
                                     <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                                    <DropdownMenuItem>Pause Subscription</DropdownMenuItem>
                                     <DropdownMenuItem className="text-destructive">
                                         Cancel Subscription
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
-                        <div className="hidden md:flex gap-2">
-                            <Button variant="ghost" className="w-full" size="sm">
-                                Edit Details
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                className="w-full text-destructive hover:text-destructive"
-                                size="sm"
-                            >
-                                Cancel Subscription
-                            </Button>
-                        </div>
                     </div>
-                    <div className="mt-2 space-y-2 [&>div]:rounded-lg [&>div]:bg-zinc-700 [&>div]:p-4 md:grid md:grid-cols-3 md:gap-2 md:space-y-0">
+                    <div className="mt-2 space-y-2 [&>div]:rounded-lg [&>div]:bg-zinc-800 [&>div]:p-4 md:grid md:grid-cols-3 md:gap-2 md:space-y-0">
                         <SimpleCard
                             title="Subscribed on"
                             description={format(new Date(selectedSubscription.creationDate), "MMMM dd, yyyy")}
@@ -125,7 +117,9 @@ export default function Subscriptions() {
                         <SimpleCard title="Lifetime spends" description={getTotalAmount(selectedSubscription)} />
                     </div>
                     <div className="mt-6 space-y-2">
-                        <p className="text-xl font-semibold">Payments</p>
+                        <div className="flex rounded-lg justify-between items-center px-4 py-3 border border-zinc-800">
+                            <p className="font-semibold text-lg">Payments</p>
+                        </div>
                         <PaymentsTable
                             payments={payments.filter(
                                 (payment) => payment.subscriptionId === selectedSubscription.uuid
