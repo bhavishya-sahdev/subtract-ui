@@ -26,7 +26,7 @@ export default function DashboardLayout({
     if (!user) return
 
     return (
-        <div>
+        <div className="h-full grow flex flex-col">
             <div className="py-4">
                 <p className="text-3xl font-semibold">Welcome, {user.name}</p>
                 <p className="text-muted-foreground text-lg">
@@ -75,7 +75,7 @@ export default function DashboardLayout({
                     </Button>
                 </Link>
             </nav>
-            <div>{children}</div>
+            {children}
         </div>
     )
 }
