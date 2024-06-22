@@ -54,7 +54,7 @@ export default function Subscriptions() {
     if (!user) return
 
     return (
-        <div className="space-y-4 h-full py-4 md:space-y-0 md:grid md:grid-cols-[minmax(200px,0.25fr)_1fr] md:gap-4">
+        <div className="space-y-4 h-full py-4 md:space-y-0 md:grid md:grid-cols-[minmax(240px,0.25fr)_1fr] md:gap-4">
             {/* sidebar */}
             <div className="w-full h-max max-h-[320px] rounded-lg overflow-y-auto bg-zinc-800">
                 {subscriptions.map((subscription) => (
