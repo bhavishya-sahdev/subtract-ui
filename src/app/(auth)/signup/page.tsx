@@ -97,7 +97,7 @@ export default function SignupForm() {
 
             // if fails show error and don't redirect
             if (user.data) setUser(user.data)
-            else return toast({ title: "Failed to get user details", description: "Please try again later" })
+            else toast({ title: "Failed to get user details", description: "Please try again later" })
         } catch (e: any) {
             toast({
                 variant: "destructive",
@@ -109,7 +109,7 @@ export default function SignupForm() {
     }
 
     return (
-        <div className="w-full max-w-sm p-4">
+        <>
             <p className="text-3xl font-semibold mb-1">Sign up for Subtract</p>
             <p className="mb-8 text-muted-foreground">Get an account going in seconds!</p>
             <div className="space-y-2">
@@ -183,6 +183,6 @@ export default function SignupForm() {
                     </div>
                 </form>
             </Form>
-        </div>
+        </>
     )
 }
