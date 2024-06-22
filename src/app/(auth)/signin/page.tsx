@@ -99,7 +99,7 @@ export default function LoginForm() {
 
             // if fails show error and don't redirect
             if (user.data) setUser(user.data)
-            else return toast({ title: "Failed to get user details", description: "Please try again later" })
+            else toast({ title: "Failed to get user details", description: "Please try again later" })
         } catch (e: any) {
             toast({
                 variant: "destructive",
@@ -111,7 +111,7 @@ export default function LoginForm() {
     }
 
     return (
-        <div className="w-full max-w-sm p-4">
+        <>
             <p className="text-3xl font-semibold mb-1">Login</p>
             <p className="mb-8 text-muted-foreground">Enter your email below to login to your account.</p>
 
@@ -166,6 +166,6 @@ export default function LoginForm() {
                     Sign up
                 </Link>
             </div>
-        </div>
+        </>
     )
 }
