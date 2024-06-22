@@ -61,7 +61,7 @@ export default function Home() {
                         <h2 className="text-2xl font-semibold">Features</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 border border-zinc-600 md:[grid-template-areas:'main_main_side1_side2''side7_side7_side3_side3''side4_side5_side5_side6'] [&>div]:border-zinc-600 [&>div]:p-6 md:[&>div]:p-8 [&>div]:space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-4 border rounded-lg border-zinc-600 md:[grid-template-areas:'main_main_side1_side2''side7_side7_side3_side3''side4_side5_side5_side6'] [&>div]:border-zinc-600 [&>div]:p-6 md:[&>div]:p-8 [&>div]:space-y-3">
                         <div className="md:[grid-area:main] md:border-r border-b">
                             {/* <CirclePercent size={36} className="stroke-zinc-300 shrink-0" /> */}
                             <div className="space-y-1">
