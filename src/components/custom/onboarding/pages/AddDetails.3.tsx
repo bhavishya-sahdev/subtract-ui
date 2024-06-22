@@ -9,13 +9,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogH
 
 import AddNewTopBar from "../AddNewSidebar"
 import DetailsForm from "../DetailsForm"
-import {
-    createSubscriptionsWithPayments,
-    generatePayments,
-    updateUserOnboardingStatus,
-    fetchUserDetails,
-    fetchUserPayments,
-} from "@/lib/utils"
+import { createSubscriptionsWithPayments, generatePayments, updateUserOnboardingStatus } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import { useUserStore } from "@/state/context/UserContext"
 import { TOnboardingForm } from "@/state/onboarding"
@@ -25,6 +19,7 @@ import { client } from "@/lib/axiosClient"
 import api from "@/lib/api"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { useGoogleLogin } from "@react-oauth/google"
+import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 
 export type TAddDetailsProps = {
     fieldArray: ReturnType<typeof useFieldArray<TOnboardingForm>>

@@ -10,7 +10,6 @@ import api from "@/lib/api"
 import { Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { fetchUserDetails } from "@/lib/utils"
 import { useUserStore } from "@/state/context/UserContext"
 import {
     Button,
@@ -26,6 +25,7 @@ import {
     useToast,
 } from "@/components/ui"
 import { useGoogleLogin } from "@react-oauth/google"
+import { fetchUserDetails } from "@/lib/serverUtils"
 
 const FormSchema = z.object({
     name: z.string(),

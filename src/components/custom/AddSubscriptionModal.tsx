@@ -4,13 +4,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Button } from "@/components/ui/button"
 import { useState, ReactNode, useEffect } from "react"
 import { addDays } from "date-fns"
-import {
-    createSubscriptionsWithPayments,
-    generatePayments,
-    updateUserOnboardingStatus,
-    fetchUserDetails,
-    fetchUserPayments,
-} from "@/lib/utils"
+import { createSubscriptionsWithPayments, generatePayments, updateUserOnboardingStatus } from "@/lib/utils"
 
 import AddSubscriptionForm from "./AddSubscriptionForm"
 import { Form, useToast } from "../ui"
@@ -19,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useUserStore } from "@/state/context/UserContext"
 import { TServerError } from "@/lib/types"
+import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 
 type TAddSubscriptionModalProps = {
     children: ReactNode
