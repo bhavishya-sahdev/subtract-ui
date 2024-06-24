@@ -8,10 +8,9 @@ import { useFieldArray, useFormContext } from "react-hook-form"
 
 export type TAddNewTopBarProps = {
     fieldArray: ReturnType<typeof useFieldArray<{ subscriptions: TSubscription[] }>>
-    handleSyncWithEmail: () => void
 }
 
-const AddNewTopBar = ({ fieldArray: { remove, prepend, fields }, handleSyncWithEmail }: TAddNewTopBarProps) => {
+const AddNewTopBar = ({ fieldArray: { remove, prepend, fields } }: TAddNewTopBarProps) => {
     const { setSelectedServiceId, selectedServiceId, selectedPrefabs, setSelectedPrefabs } = useOnboardingStore(
         (state) => state
     )
@@ -43,15 +42,6 @@ const AddNewTopBar = ({ fieldArray: { remove, prepend, fields }, handleSyncWithE
                     }}
                 >
                     <PlusCircle className="stroke-1 w-5 h-5" /> <p>Add new</p>
-                </Button>
-
-                <Button
-                    size="sm"
-                    variant="outline"
-                    className="space-x-2 w-full justify-start"
-                    onClick={handleSyncWithEmail}
-                >
-                    <Mail className="stroke-1 w-5 h-5" /> <p>Import from email</p>
                 </Button>
 
                 <Separator />
