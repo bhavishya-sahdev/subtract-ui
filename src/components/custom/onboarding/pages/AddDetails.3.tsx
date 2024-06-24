@@ -5,7 +5,7 @@ import { useFieldArray, useFormContext } from "react-hook-form"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, useToast } from "@/components/ui"
+import { Button, useToast } from "@/components/ui"
 
 import AddNewTopBar from "../AddNewSidebar"
 import DetailsForm from "../DetailsForm"
@@ -15,10 +15,6 @@ import { useUserStore } from "@/state/context/UserContext"
 import { TOnboardingForm } from "@/state/onboarding"
 import { routes } from "@/lib/routes"
 import { TServerError } from "@/lib/types"
-import { client } from "@/lib/axiosClient"
-import api from "@/lib/api"
-import { DialogTitle } from "@radix-ui/react-dialog"
-import { useGoogleLogin } from "@react-oauth/google"
 import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 
 export type TAddDetailsProps = {
@@ -27,7 +23,7 @@ export type TAddDetailsProps = {
 
 export default function AddDetails({ fieldArray }: TAddDetailsProps) {
     const { selectedServiceId, setActivePage } = useOnboardingStore((state) => state)
-    const { setUser, user, setPayments, setSubscriptions } = useUserStore((state) => state)
+    const { setUser, setPayments, setSubscriptions } = useUserStore((state) => state)
     const { toast } = useToast()
     const { getValues } = useFormContext<TOnboardingForm>()
     const { fields } = fieldArray
@@ -35,19 +31,7 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
 
     const { handleSubmit } = useFormContext<TOnboardingForm>()
 
-    const handleGoogleAuth = useGoogleLogin({
-        onSuccess: async (res) => {
-            await client.post(api.auth.google, {
-                code: res.code,
-            })
-            proceedWithSync()
-        },
-        flow: "auth-code",
-        scope: "email profile https://www.googleapis.com/auth/gmail.readonly",
-    })
-
     const [inProgress, setInProgress] = useState(false)
-    const [openDialog, setOpenDialog] = useState(false)
 
     const collectPayments = () => {
         const { subscriptions } = getValues()
@@ -60,35 +44,6 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                 renewalPeriodDays: subscription.renewalPeriodDays,
             })
         })
-    }
-
-    const handleSyncWithEmail = async () => {
-        if (!user) return
-        try {
-            if (user.isGoogleUser) {
-                const res = await client.get(api.user.mailAccess)
-                if (res.data.error !== null) {
-                    if ("code" in res.data.error && res.data.error.code === "G-403") {
-                        setOpenDialog(true)
-                    }
-                    return
-                }
-            } else {
-                handleGoogleAuth()
-            }
-            proceedWithSync()
-        } catch (e: any) {
-            console.error(e)
-        }
-    }
-
-    const proceedWithSync = async () => {
-        try {
-            const res = await client.get(api.user.readMails)
-            console.log(res.data)
-        } catch (e: any) {
-            console.error(e)
-        }
     }
 
     async function onSubmit(data: TOnboardingForm) {
@@ -157,7 +112,7 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                     <p className="text-muted-foreground">This is where the magic happens.</p>
                 </div>
 
-                <AddNewTopBar fieldArray={fieldArray} handleSyncWithEmail={handleSyncWithEmail} />
+                <AddNewTopBar fieldArray={fieldArray} />
 
                 <div>
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -172,32 +127,6 @@ export default function AddDetails({ fieldArray }: TAddDetailsProps) {
                     </form>
                 </div>
             </div>
-            <Dialog open={openDialog} onOpenChange={() => setOpenDialog(!openDialog)}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Additional permission required</DialogTitle>
-                        <DialogDescription>
-                            To sync your email with your subscriptions, we need additional permissions. Please click the
-                            button below to proceed.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <DialogFooter>
-                        <Button size="sm" variant="ghost" onClick={() => setOpenDialog(false)}>
-                            Cancel
-                        </Button>
-                        <Button
-                            size="sm"
-                            onClick={() => {
-                                handleGoogleAuth()
-                                setOpenDialog(false)
-                            }}
-                        >
-                            Proceed
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </div>
     )
 }
