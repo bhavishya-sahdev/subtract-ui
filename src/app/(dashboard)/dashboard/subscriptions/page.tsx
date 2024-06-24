@@ -1,6 +1,6 @@
 "use client"
 
-import PaymentsTable from "@/components/custom/dashboard/PaymentsTable"
+import PaymentsTable from "@/components/custom/dashboard/PaymentsTableForSubscriptionsPage"
 import SimpleCard from "@/components/custom/dashboard/SimpleCard"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui"
 import { cn, useRenderAmount } from "@/lib/utils"
