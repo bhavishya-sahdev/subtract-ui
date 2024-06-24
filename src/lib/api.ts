@@ -11,6 +11,7 @@ const api = {
         updateOnboardingStatus: "/user/update-onboarding-status",
         mailAccess: "/user/google/access",
         readMails: "/user/google/mails",
+        extract: "/user/google/mails/extract",
     },
     subscription: {
         create: "/subscription",
