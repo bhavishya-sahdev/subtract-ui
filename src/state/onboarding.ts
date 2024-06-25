@@ -55,11 +55,16 @@ export const PrefabSchema = z.object({
 
 export type TPrefab = z.infer<typeof PrefabSchema>
 
+export type TEmail = { subject: string; labels: string[]; body: string; sender: string }
+
 export type TOnboardingState = {
     activePage: number
     selectedPrefabs: string[]
     prefabs: TPrefab[]
     selectedServiceId: string | null
+    selectedEmails: TEmail[]
+    emails: TEmail[] | null
+    emailNextPageToken?: string
 }
 
 export type TOnboardingActions = {
@@ -67,6 +72,9 @@ export type TOnboardingActions = {
     setActivePage: TSetterFunction<[number]>
     setPrefabs: TSetterFunction<[]>
     setSelectedServiceId: TSetterFunction<[string]>
+    setSelectedEmails: TSetterFunction<[TEmail[]]>
+    setEmails: TSetterFunction<[TEmail[]]>
+    setEmailNextPageToken: TSetterFunction<[string | undefined]>
 }
 
 export type TOnboardingStore = TOnboardingState & TOnboardingActions
@@ -87,5 +95,14 @@ export const createOnboardingStore = () => {
 
         selectedServiceId: null,
         setSelectedServiceId: (value) => set({ selectedServiceId: value }),
+
+        selectedEmails: [],
+        setSelectedEmails: (values) => set({ selectedEmails: values }),
+
+        emails: null,
+        setEmails: (values) => set({ emails: values }),
+
+        emailNextPageToken: undefined,
+        setEmailNextPageToken: (value) => set({ emailNextPageToken: value }),
     }))
 }
