@@ -36,9 +36,19 @@ export type TPickSubscriptionsProps = {
 }
 
 export default function PickSubscriptions({ fieldArray: { fields, remove, append } }: TPickSubscriptionsProps) {
-    const { setActivePage, setSelectedServiceId, prefabs, selectedPrefabs, setSelectedPrefabs } = useOnboardingStore(
-        (state) => state
-    )
+    const {
+        setActivePage,
+        setSelectedServiceId,
+        prefabs,
+        selectedPrefabs,
+        setSelectedPrefabs,
+        emailNextPageToken,
+        setEmailNextPageToken,
+        selectedEmails,
+        setEmails,
+        emails,
+        setSelectedEmails,
+    } = useOnboardingStore((state) => state)
     const { user } = useUserStore((state) => state)
 
     const { toast } = useToast()
@@ -46,9 +56,6 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
     const [openPermissionsDialog, setOpenPermissionsDialog] = useState(false)
     const [inProgress, setInProgress] = useState(false)
 
-    const [selectedEmails, setSelectedEmails] = useState<{ subject: string; labels: string[]; body: string }[]>([])
-    const [emails, setEmails] = useState<{ subject: string; labels: string[]; body: string }[] | null>(null)
-    const [nextPageToken, setNextPageToken] = useState<string>()
     const [activeEmail, setActiveEmail] = useState<{ subject: string; labels: string[]; body: string } | null>(null)
 
     const handleGoogleAuth = useGoogleLogin({
@@ -87,7 +94,7 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
         try {
             const res = await client.get(api.user.readMails, {
                 params: {
-                    pageToken: nextPageToken,
+                    pageToken: emailNextPageToken,
                 },
             })
             if (res.data.data.messages.length === 0) return toast({ title: "No emails found" })
@@ -95,12 +102,11 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
             if (emails) setEmails([...emails, ...res.data.data.messages])
             else {
                 setEmails(res.data.data.messages)
-
                 setActiveEmail(res.data.data[0])
             }
 
-            if (res.data.data.nextPageToken) setNextPageToken(res.data.data.nextPageToken)
-            else setNextPageToken(undefined)
+            if (res.data.data.nextPageToken) setEmailNextPageToken(res.data.data.nextPageToken)
+            else setEmailNextPageToken(undefined)
         } catch (e: any) {
             toast({ title: "Failed to sync emails", description: "Please try again later" })
             console.error(e)
@@ -186,7 +192,7 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
                                                 </button>
                                             </div>
                                         ))}
-                                    {nextPageToken !== undefined ? (
+                                    {emailNextPageToken !== undefined ? (
                                         <button
                                             onClick={() => {
                                                 setInProgress(true)
