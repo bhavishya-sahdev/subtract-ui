@@ -31,7 +31,7 @@ export const authWithGoogle = async (
 }
 
 export const fetchUserDetails = cache(
-    async (): Promise<TAxiosSuccessResponse<TAxiosUserDetails> | TAxiosErrorResponse<{ message: string }>> => {
+    async (): Promise<TAxiosSuccessResponse<TAxiosUserDetails> | TAxiosErrorResponse<{ message: unknown }>> => {
         const cookieStore = cookies()
         const token = cookieStore.get("token")
         try {
@@ -44,7 +44,7 @@ export const fetchUserDetails = cache(
         } catch (error) {
             return {
                 data: null,
-                error: { message: JSON.stringify(error) },
+                error: { message: error },
             }
         }
     }
