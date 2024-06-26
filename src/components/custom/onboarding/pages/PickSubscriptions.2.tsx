@@ -24,7 +24,7 @@ import { client } from "@/lib/axiosClient"
 import { initiateNewSubscription } from "@/lib/utils"
 import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import { useUserStore } from "@/state/context/UserContext"
-import { TSubscription } from "@/state/onboarding"
+import { TEmail, TSubscription } from "@/state/onboarding"
 import { useGoogleLogin } from "@react-oauth/google"
 import { xor, intersection, union } from "lodash"
 import { Loader2, Mail } from "lucide-react"
@@ -56,7 +56,7 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
     const [openPermissionsDialog, setOpenPermissionsDialog] = useState(false)
     const [inProgress, setInProgress] = useState(false)
 
-    const [activeEmail, setActiveEmail] = useState<{ subject: string; labels: string[]; body: string } | null>(null)
+    const [activeEmail, setActiveEmail] = useState<TEmail | null>(null)
 
     const handleGoogleAuth = useGoogleLogin({
         onSuccess: async (res) => {
@@ -159,12 +159,12 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
 
             {emails !== null ? (
                 <>
-                    <p className="text-muted-foreground mb-2">Please select relavent emails from the list below.</p>
-                    <div className="flex flex-col md:flex-row flex-grow-0 w-full h-[700px] bg-zinc-900 rounded-sm">
+                    <p className="text-muted-foreground mb-2">Please select relevant emails from the list below.</p>
+                    <div className="flex flex-col md:flex-row flex-grow-0 w-full h-[700px] md:h-[500px] gap-2">
                         {/* email subject */}
                         {emails.length > 0 ? (
                             <>
-                                <div className="overflow-y-auto shrink-0 h-[200px] w-full md:h-full md:w-[250px] rounded-l-sm bg-zinc-800 [&>*:not(:last-child)]:border-b [&>*:not(:last-child)]:border-zinc-700">
+                                <div className="overflow-y-auto shrink-0 h-[200px] w-full md:h-full md:w-[250px] rounded-sm bg-zinc-800 [&>*:not(:last-child)]:border-b [&>*:not(:last-child)]:border-zinc-700">
                                     {emails
                                         .filter((email) => !email.labels.includes("CATEGORY_PROMOTIONS"))
                                         .map((email, idx) => (
@@ -206,12 +206,13 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
                                         </button>
                                     ) : null}
                                 </div>
-                                <div className="space-y-2 md:h-full w-full flex-shrink flex flex-col overflow-auto ">
+                                <div className="space-y-2 rounded-sm md:h-full w-full flex-shrink flex flex-col overflow-auto bg-zinc-900 flex-grow">
                                     {activeEmail ? (
                                         <>
-                                            <p className="text-lg font-semibold bg-zinc-800 px-4 py-2 rounded-tr-sm">
-                                                {activeEmail.subject}
-                                            </p>
+                                            <div className="bg-zinc-800 px-4 py-2 rounded-tr-sm">
+                                                <p className="text-lg font-semibold">{activeEmail.subject}</p>
+                                                <p className="text-sm text-muted-foreground">{activeEmail.sender}</p>
+                                            </div>
                                             <div className="flex-shrink px-4 py-2">
                                                 <p className="text-sm">{activeEmail.body}</p>
                                             </div>
