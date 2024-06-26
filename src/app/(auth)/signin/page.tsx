@@ -99,7 +99,7 @@ export default function LoginForm() {
 
             // if fails show error and don't redirect
             if (user.data) setUser(user.data)
-            else toast({ title: "Failed to get user details", description: "Please try again later" })
+            else toast({ title: "Failed to get user details", description: user.error.message })
         } catch (e: any) {
             toast({
                 variant: "destructive",
