@@ -230,10 +230,18 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
                     </div>
                 </>
             ) : (
-                <Button size="sm" className="space-x-2 justify-start mt-2" onClick={handleSyncWithEmail}>
-                    {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    <Mail className="stroke-1 w-5 h-5" /> <p>Import from email</p>
-                </Button>
+                <div className="mt-2 space-y-2">
+                    <div className="border rounded p-4 border-zinc-700">
+                        <p className="text-muted-foreground">
+                            The connection to the backend is still under development.
+                        </p>
+                        <p className="text-bold">Import from email feature is unavailable</p>
+                    </div>
+                    <Button size="sm" className="space-x-2 justify-start" onClick={handleSyncWithEmail}>
+                        {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <Mail className="stroke-1 w-5 h-5" /> <p>Import from email</p>
+                    </Button>
+                </div>
             )}
 
             <Separator className="bg-zinc-600 my-4" />
