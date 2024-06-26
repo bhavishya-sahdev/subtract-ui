@@ -73,7 +73,7 @@ export default function AddSubscriptionForm() {
                         <FormItem>
                             <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <FormLabel htmlFor="subscription_created_date">Subscribed On</FormLabel>
-                                <Popover>
+                                <Popover modal>
                                     <PopoverTrigger asChild>
                                         <FormControl>
                                             <Button
