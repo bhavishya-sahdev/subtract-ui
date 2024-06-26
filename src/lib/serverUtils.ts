@@ -44,7 +44,7 @@ export const fetchUserDetails = cache(
         } catch (error) {
             return {
                 data: null,
-                error: { message: "Failed to load user data" },
+                error: { message: JSON.stringify(error) },
             }
         }
     }
