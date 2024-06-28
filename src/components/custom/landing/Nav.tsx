@@ -34,17 +34,23 @@ const LandingNav = () => {
                     </Button>
                 </Link>
 
-                <div className="hidden sm:block">
-                    <Button variant="link" onClick={handleClick("about")} className="text-foreground justify-start">
-                        About
-                    </Button>
-                    <Button variant="link" onClick={handleClick("features")} className="text-foreground justify-start">
-                        Features
-                    </Button>
-                    <Button variant="link" onClick={handleClick("pricing")} className="text-foreground justify-start">
+                {routes.DEFAULT && (
+                    <div className="hidden sm:block">
+                        <Button variant="link" onClick={handleClick("about")} className="text-foreground justify-start">
+                            About
+                        </Button>
+                        <Button
+                            variant="link"
+                            onClick={handleClick("features")}
+                            className="text-foreground justify-start"
+                        >
+                            Features
+                        </Button>
+                        {/* <Button variant="link" onClick={handleClick("pricing")} className="text-foreground justify-start">
                         Pricing
-                    </Button>
-                </div>
+                    </Button> */}
+                    </div>
+                )}
             </div>
             <div>
                 <div className="hidden md:flex">
@@ -83,27 +89,31 @@ const LandingNav = () => {
                         }}
                     >
                         <nav className="flex flex-col py-2 space-y-2">
-                            <Button
-                                variant="link"
-                                onClick={handleClick("about")}
-                                className="text-foreground justify-start"
-                            >
-                                About
-                            </Button>
-                            <Button
-                                variant="link"
-                                onClick={handleClick("features")}
-                                className="text-foreground justify-start"
-                            >
-                                Features
-                            </Button>
-                            <Button
+                            {routes.DEFAULT && (
+                                <>
+                                    <Button
+                                        variant="link"
+                                        onClick={handleClick("about")}
+                                        className="text-foreground justify-start"
+                                    >
+                                        About
+                                    </Button>
+                                    <Button
+                                        variant="link"
+                                        onClick={handleClick("features")}
+                                        className="text-foreground justify-start"
+                                    >
+                                        Features
+                                    </Button>
+                                </>
+                            )}
+                            {/* <Button
                                 variant="link"
                                 onClick={handleClick("pricing")}
                                 className="text-foreground justify-start"
                             >
                                 Pricing
-                            </Button>
+                            </Button> */}
                             {!user ? (
                                 <>
                                     <Separator />
