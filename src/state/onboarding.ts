@@ -55,7 +55,7 @@ export const PrefabSchema = z.object({
 
 export type TPrefab = z.infer<typeof PrefabSchema>
 
-export type TEmail = { subject: string; labels: string[]; body: string; sender: string }
+export type TEmail = { subject: string; labels: string[]; body: string; sender: string; date: string; id: string }
 
 export type TOnboardingState = {
     activePage: number
