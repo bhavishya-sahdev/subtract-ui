@@ -16,6 +16,7 @@ import {
     DialogHeader,
     DialogTitle,
     Checkbox,
+    Input,
 } from "@/components/ui"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -26,9 +27,9 @@ import { useOnboardingStore } from "@/state/context/OnboardingContext"
 import { useUserStore } from "@/state/context/UserContext"
 import { TEmail, TSubscription } from "@/state/onboarding"
 import { useGoogleLogin } from "@react-oauth/google"
-import { xor, intersection, union } from "lodash"
+import { xor, intersection, union, set } from "lodash"
 import { Loader2, Mail } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useFieldArray } from "react-hook-form"
 
 export type TPickSubscriptionsProps = {
@@ -50,6 +51,9 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
         setSelectedEmails,
     } = useOnboardingStore((state) => state)
     const { user } = useUserStore((state) => state)
+
+    const [query, setQuery] = useState("")
+    const [filteredEmails, setFilteredEmails] = useState<TEmail[]>([])
 
     const { toast } = useToast()
 
@@ -115,9 +119,17 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
         }
     }
 
+    const handleEmailSearch = useCallback(() => {
+        // filter emails by subject based on query
+        if (emails) {
+            const filtered = emails.filter((email) => email.subject.toLowerCase().includes(query.toLowerCase()))
+            setFilteredEmails(filtered)
+        }
+    }, [emails, query])
+
     useEffect(() => {
-        console.log(selectedEmails)
-    }, [selectedEmails])
+        handleEmailSearch()
+    }, [handleEmailSearch])
 
     const handleToggleSelection = (v: string[]) => {
         let updated: string[] = []
@@ -145,10 +157,12 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
             setSelectedServiceId(newSub.uuid)
         }
         if (selectedEmails.length > 0) {
+            console.log(selectedEmails)
+
             const res = await client.post(api.user.extract, {
                 messages: selectedEmails,
             })
-            console.log(res)
+            console.log(res.data.data.subscriptions)
         }
         setActivePage(2)
     }
@@ -164,47 +178,57 @@ export default function PickSubscriptions({ fieldArray: { fields, remove, append
                         {/* email subject */}
                         {emails.length > 0 ? (
                             <>
-                                <div className="overflow-y-auto shrink-0 h-[200px] w-full md:h-full md:w-[250px] rounded-sm bg-zinc-800 [&>*:not(:last-child)]:border-b [&>*:not(:last-child)]:border-zinc-700">
-                                    {emails
-                                        .filter((email) => !email.labels.includes("CATEGORY_PROMOTIONS"))
-                                        .map((email, idx) => (
-                                            <div key={idx} className="flex gap-2 p-2 items-center">
-                                                <Checkbox
-                                                    onCheckedChange={(checked) => {
-                                                        if (!checked) {
-                                                            // Deselect
-                                                            setSelectedEmails(
-                                                                selectedEmails.filter(
-                                                                    (e) => e.subject !== email.subject
+                                <div className="shrink-0 flex flex-col gap-2 h-[200px] w-full md:h-full md:w-[250px]">
+                                    <div>
+                                        <Input
+                                            className=""
+                                            type="text"
+                                            placeholder="Search Emails"
+                                            value={query}
+                                            onChange={(e) => setQuery(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="h-full overflow-y-auto  rounded-sm bg-zinc-800 [&>*:not(:last-child)]:border-b [&>*:not(:last-child)]:border-zinc-700">
+                                        {(filteredEmails.length > 0 ? filteredEmails : emails)
+                                            .filter((email) => !email.labels.includes("CATEGORY_PROMOTIONS"))
+                                            .map((email, idx) => (
+                                                <div key={idx} className="flex gap-2 p-2 items-center">
+                                                    <Checkbox
+                                                        onCheckedChange={(checked) => {
+                                                            if (!checked) {
+                                                                // Deselect
+                                                                setSelectedEmails(
+                                                                    selectedEmails.filter((e) => e.id !== email.id)
                                                                 )
-                                                            )
-                                                        } else {
-                                                            // Select
-                                                            setSelectedEmails([...selectedEmails, email])
-                                                        }
-                                                    }}
-                                                />
-                                                <button
-                                                    className="w-full text-left whitespace-nowrap overflow-hidden overflow-ellipsis text-sm"
-                                                    onClick={() => setActiveEmail(email)}
-                                                >
-                                                    <span className="">{email.subject}</span>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    {emailNextPageToken !== undefined ? (
-                                        <button
-                                            onClick={() => {
-                                                setInProgress(true)
-                                                proceedWithSync()
-                                            }}
-                                            disabled={inProgress}
-                                            className="flex items-center justify-center w-full p-3 bg-zinc-600 hover:bg-zinc-500 gap-1"
-                                        >
-                                            {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                            Load more
-                                        </button>
-                                    ) : null}
+                                                            } else {
+                                                                // Select
+                                                                setSelectedEmails([...selectedEmails, email])
+                                                            }
+                                                        }}
+                                                        checked={selectedEmails.some((e) => e.id === email.id)}
+                                                    />
+                                                    <button
+                                                        className="w-full text-left whitespace-nowrap overflow-hidden overflow-ellipsis text-sm"
+                                                        onClick={() => setActiveEmail(email)}
+                                                    >
+                                                        <span className="">{email.subject}</span>
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        {emailNextPageToken !== undefined ? (
+                                            <button
+                                                onClick={() => {
+                                                    setInProgress(true)
+                                                    proceedWithSync()
+                                                }}
+                                                disabled={inProgress}
+                                                className="flex items-center justify-center w-full p-3 bg-zinc-600 hover:bg-zinc-500 gap-1"
+                                            >
+                                                {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                Load more
+                                            </button>
+                                        ) : null}
+                                    </div>
                                 </div>
                                 <div className="space-y-2 rounded-sm md:h-full w-full flex-shrink flex flex-col overflow-auto bg-zinc-900 flex-grow">
                                     {activeEmail ? (
