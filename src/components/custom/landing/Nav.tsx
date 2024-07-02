@@ -34,7 +34,7 @@ const LandingNav = () => {
                     </Button>
                 </Link>
 
-                {routes.DEFAULT && (
+                {pathname === routes.DEFAULT && (
                     <div className="hidden sm:block">
                         <Button variant="link" onClick={handleClick("about")} className="text-foreground justify-start">
                             About
@@ -89,7 +89,7 @@ const LandingNav = () => {
                         }}
                     >
                         <nav className="flex flex-col py-2 space-y-2">
-                            {routes.DEFAULT && (
+                            {pathname === routes.DEFAULT && (
                                 <>
                                     <Button
                                         variant="link"
