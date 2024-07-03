@@ -37,6 +37,30 @@ export const createSubscriptionsWithPayments = async <T extends Record<string, a
     }
 }
 
+export const updateSubscription = async <T extends Record<string, any>>(
+    data: T,
+    id: string
+): Promise<
+    | TAxiosSuccessResponse<{
+          subscriptions: {
+              ownerId: string
+              subscriptionId: string
+          }[]
+      }>
+    | TAxiosErrorResponse<TError>
+> => {
+    try {
+        const res = await client.post(api.subscription.update(id), data)
+        if (res.data.error) return { data: null, error: res.data.error }
+        return { data: res.data, error: null }
+    } catch (error) {
+        return {
+            data: null,
+            error: { message: "Failed to create subscriptions" },
+        }
+    }
+}
+
 export const updateUserOnboardingStatus = async (): Promise<
     TAxiosSuccessResponse<TAxiosUserDetails> | TAxiosErrorResponse<z.ZodError | { message: string }>
 > => {
