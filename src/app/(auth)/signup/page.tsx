@@ -176,6 +176,12 @@ export default function SignupForm() {
                         </Button>
                     </div>
                     <div className="mx-auto mt-2 text-center text-sm text-muted-foreground">
+                        By signing up you agree to the{" "}
+                        <Link href={routes.documents.privacyPolicy} className="underline">
+                            Privacy Policy
+                        </Link>
+                    </div>
+                    <div className="mx-auto mt-2 text-center text-sm text-muted-foreground">
                         Already have an account?{" "}
                         <Link href={routes.auth.login} className="underline">
                             Sign in
