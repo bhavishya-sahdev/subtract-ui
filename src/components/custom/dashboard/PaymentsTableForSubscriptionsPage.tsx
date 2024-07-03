@@ -36,7 +36,7 @@ export type TPaymentTableProps = {
 }
 
 export default function PaymentsTable({ payments }: TPaymentTableProps) {
-    const [sorting, setSorting] = useState<SortingState>([])
+    const [sorting, setSorting] = useState<SortingState>([{ id: "date", desc: true }])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
@@ -46,15 +46,10 @@ export default function PaymentsTable({ payments }: TPaymentTableProps) {
 
     const columns: ColumnDef<TAxiosPaymentDetails>[] = [
         {
-            header: "Id",
-            cell: ({ row }) => <span>{row.id}</span>,
-            enableSorting: true,
-            enableHiding: false,
-        },
-        {
             header: "Payment Date",
             accessorKey: "date",
             cell: ({ row }) => <span>{format(new Date(row.getValue("date")), "MMMM dd, yyyy")}</span>,
+            sortingFn: (a, b) => new Date(a.getValue("date")).getTime() - new Date(b.getValue("date")).getTime(),
             enableSorting: true,
             enableHiding: false,
             enableResizing: true,
