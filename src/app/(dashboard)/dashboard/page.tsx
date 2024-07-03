@@ -13,10 +13,50 @@ import Link from "next/link"
 import { routes } from "@/lib/routes"
 import AddSubscriptionModal from "@/components/custom/AddSubscriptionModal"
 import RemoveSubscriptionModal from "@/components/custom/RemoveSubscriptionModal"
+import { useEffect, useState } from "react"
+import { client } from "@/lib/axiosClient"
+import api from "@/lib/api"
+import { Dialog, DialogTrigger } from "@radix-ui/react-dialog"
 
 export default function Dashboard() {
     const subscriptions = useUserStore((state) => state.subscriptions)
     const payments = useUserStore((state) => state.payments)
+    const [openDialog, setOpenDialog] = useState(false)
+
+    const [stats, setStats] = useState<{
+        year: Record<
+            string,
+            {
+                payments: []
+                total: 0
+                preferredCurrencyCode: ""
+            }
+        >
+        month: Record<
+            `${string}-${string}`,
+            {
+                payments: []
+                total: 0
+                preferredCurrencyCode: ""
+            }
+        >
+    }>({ year: {}, month: {} })
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const stats = await client.get(api.payment.stats, {
+                    params: {
+                        period: "month",
+                    },
+                })
+                setStats(stats.data.data)
+            } catch (err: any) {
+                console.error(err)
+            }
+        }
+        fetchData()
+    }, [])
 
     const currencies = useUserStore((state) => state.currencies)
 
@@ -24,13 +64,36 @@ export default function Dashboard() {
 
     return (
         <div>
-            <div className="space-y-4 md:space-y-0 md:flex md:gap-4 py-4">
+            <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-4 md:gap-4 py-4">
                 <Card className="bg-zinc-800">
                     <CardContent className="px-5 py-4 spacy-y-2">
                         <p className="text-muted-foreground">Your Spends This Month</p>
                         <div>
-                            <p className="text-xl font-semibold">$421.89</p>
-                            <p className="text-xs text-muted-foreground">(+$320 over last month)</p>
+                            <p className="text-xl font-semibold">
+                                {new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency:
+                                        stats.month[`${new Date().getFullYear()}-${new Date().getMonth() + 1}`]
+                                            ?.preferredCurrencyCode || "USD",
+                                }).format(
+                                    stats.month[`${new Date().getFullYear()}-${new Date().getMonth() + 1}`]?.total || 0
+                                )}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                (
+                                {new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency:
+                                        stats.month[`${new Date().getFullYear()}-${new Date().getMonth()}`]
+                                            ?.preferredCurrencyCode || "USD",
+                                }).format(
+                                    (stats.month[`${new Date().getFullYear()}-${new Date().getMonth() + 1}`]?.total ||
+                                        0) -
+                                        (stats.month[`${new Date().getFullYear()}-${new Date().getMonth()}`]?.total ||
+                                            0)
+                                )}{" "}
+                                over last month)
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -38,8 +101,58 @@ export default function Dashboard() {
                     <CardContent className="px-5 py-4 spacy-y-2">
                         <p className="text-muted-foreground">Your Spends This Year</p>
                         <div>
-                            <p className="text-xl font-semibold">$5421.89</p>
-                            <p className="text-xs text-muted-foreground">(+$920 over last month)</p>
+                            <p className="text-xl font-semibold">
+                                {new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency: stats.year[`${new Date().getFullYear()}`]?.preferredCurrencyCode || "USD",
+                                }).format(stats.year[`${new Date().getFullYear()}`]?.total || 0)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                (
+                                {new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency: stats.year[`${new Date().getFullYear()}`]?.preferredCurrencyCode || "USD",
+                                }).format(
+                                    (stats.year[`${new Date().getFullYear()}}`]?.total || 0) -
+                                        (stats.year[`${new Date().getFullYear() - 1}`]?.total || 0)
+                                )}{" "}
+                                over last year)
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card className="bg-zinc-800">
+                    <CardContent className="px-5 py-4 spacy-y-2">
+                        <p className="text-muted-foreground">Payments Made This Month</p>
+                        <div>
+                            <p className="text-xl font-semibold">
+                                {stats.month[`${new Date().getFullYear()}-${new Date().getMonth()}`]?.payments.length ||
+                                    0}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                (
+                                {(stats.month[`${new Date().getFullYear()}-${new Date().getMonth()}`]?.payments
+                                    .length || 0) -
+                                    (stats.month[`${new Date().getFullYear()}-${new Date().getMonth() - 1}`]?.payments
+                                        .length || 0)}{" "}
+                                over last month)
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card className="bg-zinc-800">
+                    <CardContent className="px-5 py-4 spacy-y-2">
+                        <p className="text-muted-foreground">Payments Made This Year</p>
+                        <div>
+                            <p className="text-xl font-semibold">
+                                {stats.year[`${new Date().getFullYear()}`]?.payments.length || 0}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                (
+                                {(stats.year[`${new Date().getFullYear()}`]?.payments.length || 0) -
+                                    (stats.year[`${new Date().getFullYear() - 1}`]?.payments.length || 0)}{" "}
+                                over last year)
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -89,12 +202,15 @@ export default function Dashboard() {
 
                         <div>
                             <div className="grid md:grid-cols-2 gap-2 [&>button]:w-full [&>button]:h-[100px] [&>button]:flex-col [&>button]:gap-1">
-                                <AddSubscriptionModal>
-                                    <Button variant="secondary">
-                                        <Plus className="mr-2 h-5 w-5" />
-                                        Add Subscription
-                                    </Button>
-                                </AddSubscriptionModal>
+                                <Dialog modal open={openDialog} onOpenChange={() => setOpenDialog(!openDialog)}>
+                                    <DialogTrigger asChild>
+                                        <Button variant="secondary">
+                                            <Plus className="mr-2 h-5 w-5" />
+                                            Add Subscription
+                                        </Button>
+                                    </DialogTrigger>
+                                    <AddSubscriptionModal handleClose={() => setOpenDialog(false)} details={{}} />
+                                </Dialog>
 
                                 {/* sync emails */}
                                 <Button variant="secondary">
