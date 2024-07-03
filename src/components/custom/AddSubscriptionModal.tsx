@@ -1,10 +1,10 @@
 "use client"
 
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { useState, ReactNode, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { addDays } from "date-fns"
-import { createSubscriptionsWithPayments, generatePayments, updateUserOnboardingStatus } from "@/lib/utils"
+import { createSubscriptionsWithPayments, generatePayments, updateSubscription } from "@/lib/utils"
 
 import AddSubscriptionForm from "./AddSubscriptionForm"
 import { Form, useToast } from "../ui"
@@ -15,9 +15,7 @@ import { useUserStore } from "@/state/context/UserContext"
 import { TServerError } from "@/lib/types"
 import { fetchUserDetails, fetchUserPayments } from "@/lib/serverUtils"
 
-type TAddSubscriptionModalProps = {
-    children: ReactNode
-}
+type TAddSubscriptionModalProps = { handleClose: () => void; edit?: boolean; details: Partial<TSubscription> }
 
 const formDefaultValues: Omit<TSubscription, "uuid"> = {
     name: "",
@@ -29,12 +27,11 @@ const formDefaultValues: Omit<TSubscription, "uuid"> = {
     renewalPeriodDays: 1,
 }
 
-export default function AddSubscriptionModal({ children }: TAddSubscriptionModalProps) {
+export default function AddSubscriptionModal({ handleClose, details, edit = false }: TAddSubscriptionModalProps) {
     const { setUser, setPayments, setSubscriptions } = useUserStore((state) => state)
     const { toast } = useToast()
 
     const [inProgress, setInProgress] = useState(false)
-    const [openDialog, setOpenDialog] = useState(false)
 
     const form = useForm<Omit<TSubscription, "uuid">>({
         resolver: zodResolver(SubscriptionFormSchema.omit({ uuid: true })),
@@ -66,19 +63,27 @@ export default function AddSubscriptionModal({ children }: TAddSubscriptionModal
     }, [watchRenewalPeriodDays, watchRenewalPeriodEnum, watchCreationDate, watchRenewalAmount, watchCurrencyId])
 
     useEffect(() => {
-        console.log(form.formState.errors)
-    }, [form.formState.errors])
+        if (edit)
+            form.reset({
+                ...details,
+                creationDate:
+                    typeof details.creationDate === "string" ? new Date(details.creationDate) : details.creationDate,
+            })
+        else form.reset(formDefaultValues)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [edit, details])
 
     async function onSubmit(data: Omit<TSubscription, "uuid">) {
         try {
             setInProgress(true)
-            const res = await createSubscriptionsWithPayments({
-                subscriptions: [data],
-                payments: [formPayments],
-            })
+            const res = await (edit
+                ? updateSubscription({ subscription: data, payments: formPayments }, details.uuid!)
+                : createSubscriptionsWithPayments({
+                      subscriptions: [data],
+                      payments: [formPayments],
+                  }))
 
             if (res.data !== null) {
-                const onboardingStatusRes = await updateUserOnboardingStatus()
                 const updatedUser = await fetchUserDetails()
                 const payments = await fetchUserPayments()
                 if (updatedUser.data === null || payments.data === null)
@@ -87,13 +92,11 @@ export default function AddSubscriptionModal({ children }: TAddSubscriptionModal
                     })
 
                 toast({ title: "Subscription added" })
-                if (onboardingStatusRes.data !== null) {
-                    setUser(updatedUser.data)
-                    setSubscriptions(updatedUser.data.subscriptions)
-                    setPayments(payments.data)
-                    form.reset(formDefaultValues)
-                    setOpenDialog(false)
-                }
+                setUser(updatedUser.data)
+                setSubscriptions(updatedUser.data.subscriptions)
+                setPayments(payments.data)
+                form.reset(formDefaultValues)
+                handleClose()
             } else {
                 // handle backend zod errors on fields
                 const zodErrors = res.error
@@ -120,26 +123,23 @@ export default function AddSubscriptionModal({ children }: TAddSubscriptionModal
     }
 
     return (
-        <Dialog modal open={openDialog} onOpenChange={() => setOpenDialog(!openDialog)}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="max-h-screen overflow-y-auto overflow-x-hidden">
-                <DialogHeader className="mb-4">
-                    <DialogTitle>Add Subscription</DialogTitle>
-                </DialogHeader>
-                <div className="w-full">
-                    <Form {...form}>
-                        <form>
-                            <AddSubscriptionForm />
-                        </form>
-                    </Form>
-                </div>
-                <DialogFooter className="sm:justify-start">
-                    <Button onClick={form.handleSubmit(onSubmit)}>Add Subscription</Button>
-                    <Button variant="secondary" onClick={() => setOpenDialog(false)}>
-                        Cancel
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <DialogContent className="max-h-screen overflow-y-auto overflow-x-hidden">
+            <DialogHeader className="mb-4">
+                <DialogTitle>Add Subscription</DialogTitle>
+            </DialogHeader>
+            <div className="w-full">
+                <Form {...form}>
+                    <form>
+                        <AddSubscriptionForm />
+                    </form>
+                </Form>
+            </div>
+            <DialogFooter className="sm:justify-start">
+                <Button onClick={form.handleSubmit(onSubmit)}>Add Subscription</Button>
+                <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                </Button>
+            </DialogFooter>
+        </DialogContent>
     )
 }
