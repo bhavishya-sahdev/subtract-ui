@@ -7,6 +7,9 @@ export const routes = {
         subscriptions: "/dashboard/subscriptions",
         payments: "/dashboard/payments",
     },
+    documents: {
+        privacyPolicy: "/privacy-policy",
+    },
     auth: {
         signup: "/signup",
         login: "/signin",
