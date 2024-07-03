@@ -20,6 +20,12 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuTrigger,
+    Input,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
     Table,
     TableBody,
     TableCell,
@@ -27,17 +33,19 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, SortAsc, SortDesc } from "lucide-react"
 import { TAxiosPaymentDetails } from "@/lib/types"
 import { useState } from "react"
 import { useUserStore } from "@/state/context/UserContext"
 import { useRenderAmount } from "@/lib/utils"
+import { PaymentStatus } from "@/state/onboarding"
 
 export default function PaymentsTable() {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
+
     const currencies = useUserStore((state) => state.currencies)
     const subscriptions = useUserStore((state) => state.subscriptions)
     const payments = useUserStore((state) => state.payments)
@@ -46,8 +54,8 @@ export default function PaymentsTable() {
 
     const columns: ColumnDef<TAxiosPaymentDetails>[] = [
         {
+            id: "subscription",
             header: "Subscription",
-            // accessorKey: "subscriptionName",
             cell: ({ row }) => {
                 const { subscriptionId } = row.original
                 const subscription = subscriptions.find((sub) => sub.uuid === subscriptionId)
@@ -56,19 +64,72 @@ export default function PaymentsTable() {
             },
             enableSorting: true,
             enableGrouping: true,
+            filterFn: (row, _id, value) => {
+                const subscription = subscriptions.find((sub) => sub.uuid === row.original.subscriptionId)
+
+                return subscription?.name.toLowerCase().includes(value.toLowerCase()) ?? false
+            },
         },
         {
-            header: "Payment Date",
+            id: "date",
             accessorKey: "date",
-            cell: ({ row }) => <span>{format(new Date(row.getValue("date")), "MMMM dd, yyyy")}</span>,
+            header: ({ column }) => (
+                <div className="flex items-center gap-2">
+                    Payment Date
+                    <Button
+                        variant={column.getIsSorted() ? "secondary" : "ghost"}
+                        size="icon"
+                        className="size-8"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        {
+                            {
+                                asc: <SortAsc className="h-4 w-4 " />,
+                                desc: <SortDesc className="h-4 w-4" />,
+                                none: <SortAsc className="h-4 w-4" />,
+                            }[column.getIsSorted() === false ? "none" : column.getIsSorted() === "asc" ? "asc" : "desc"]
+                        }
+                    </Button>
+                </div>
+            ),
+            cell: ({ row }) => <span>{format(new Date(row.getValue("date")), "MMMM dd, yyyy")} </span>,
             enableSorting: true,
             enableHiding: true,
             enableGrouping: true,
             enableResizing: true,
+            sortingFn: (rowA, rowB) => {
+                const dateA = new Date(rowA.getValue("date")).getTime()
+                const dateB = new Date(rowB.getValue("date")).getTime()
+                return dateA - dateB
+            },
         },
         {
             id: "amount",
-            header: () => <div className="text-right">Amount</div>,
+            accessorKey: "amount",
+            header: ({ column }) => (
+                <div className="flex items-center gap-2 justify-end">
+                    Amount
+                    <Button
+                        variant={column.getIsSorted() ? "secondary" : "ghost"}
+                        size="icon"
+                        className="size-8"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        {
+                            {
+                                asc: <SortAsc className="h-4 w-4 " />,
+                                desc: <SortDesc className="h-4 w-4" />,
+                                none: <SortAsc className="h-4 w-4" />,
+                            }[column.getIsSorted() === false ? "none" : column.getIsSorted() === "asc" ? "asc" : "desc"]
+                        }
+                    </Button>
+                </div>
+            ),
+            sortingFn: (rowA, rowB) => {
+                const amountA = rowA.original.amount
+                const amountB = rowB.original.amount
+                return amountA - amountB
+            },
             cell: ({ row }) => {
                 const { currencyId, amount } = row.original
                 return <div className="text-right font-medium">{renderAmount(currencyId, amount)}</div>
@@ -141,32 +202,27 @@ export default function PaymentsTable() {
     if (!payments) return null
     return (
         <div className="w-full">
-            {/* <div className="flex items-center py-4">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div> */}
+            <div className="flex items-center py-4">
+                <Input
+                    placeholder="Search By Subscription"
+                    value={(table.getColumn("subscription")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) => table.getColumn("subscription")?.setFilterValue(event.target.value)}
+                    className="max-w-sm"
+                />
+
+                {/* filter by payment status render a select here */}
+                <Select>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Filter By Payment Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value={PaymentStatus.Values.paid}>Paid</SelectItem>
+                        <SelectItem value={PaymentStatus.Values.pending}>Pending</SelectItem>
+                        <SelectItem value={PaymentStatus.Values.upcoming}>Upcoming</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
