@@ -17,6 +17,13 @@ const api = {
         create: "/subscription",
         createWithPayments: "/subscription/payments",
         remove: (id: string) => `/subscription/${id}/delete`,
+        stats: "/subscription/by-timeframe",
+        update: (id: string) => `/subscription/${id}/update`,
+    },
+    payment: {
+        create: "/payment",
+        remove: (id: string) => `/payment/${id}/delete`,
+        stats: "/payment/by-timeframe",
     },
     utils: {
         currency: "/currency",
